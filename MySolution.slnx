@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="001HelloWorldCS/001HelloWorldCS.csproj" Id="aba7c5ff-ac31-447e-8ad4-88317be9607b" />
+  <Project Path="002HelloWorldCPP/002HelloWorldCPP.vcxproj" Id="1fafab52-20cd-446c-8560-d22e3da937c3" />
+</Solution>
