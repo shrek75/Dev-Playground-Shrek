@@ -7,4 +7,5 @@
   <Project Path="001HelloWorldCS/001HelloWorldCS.csproj" Id="aba7c5ff-ac31-447e-8ad4-88317be9607b" />
   <Project Path="002HelloWorldCPP/002HelloWorldCPP.vcxproj" Id="1fafab52-20cd-446c-8560-d22e3da937c3" />
   <Project Path="003_Sokoban/003_Sokoban.csproj" Id="bb03cd57-e974-43ea-9410-0466040fe749" />
+  <Project Path="004_MySokoban/004_MySokoban.csproj" Id="2ccb2a4c-9e49-4710-be26-5d075d0ea23a" />
 </Solution>
