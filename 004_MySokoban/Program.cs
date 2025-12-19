@@ -1,28 +1,92 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace _004_MySokoban
 {
     internal class Program
     {
+        const int mapSizeX = 19; //맵 가로 사이즈
+        const int mapSizeY = 11; //맵 세로 사이즈
+        
+        static char[,] loadedMap = new char[mapSizeY,mapSizeX]; //로딩한맵
+        //아니 이거 왜 mapSizeY로는 할당 되면서 X까지 할려니까 안되는거임??
+        // 배열의배열은 그럴필요가없으니까 안되는듯
+        
+
+        static List<Object> [,] nowMap; //오브젝트리스트의 2차원배열맵. 2차원배열로 어케함?
+
+        void testFunc(char[] t)
+        {
+            t.
+        }
         static void Main(string[] args)
         {
+
+            char[] arr = new char[5];
+            
             // 소코반은 FPS 개념이 필요가 없는게임이다.
             // 유저의 입력이 있을때만 Update와 Render를 돌려주면 된다.
             // 키입력확인, Update, Render / 3개의 단계로 구성된다.
 
             //로딩
+            Console.OutputEncoding = Encoding.UTF8;
 
             //처음 씬 생성
             CbaseScene currentScene = new CsceneStart();
             //Player 생성
-            Cplayer player = new Cplayer();
+            Cplayer player = new Cplayer(new Position { _x = 0, _y = 0});
 
             //Player와 진행사항과 맵 로딩
+            
+            string t = File.ReadAllText(@"Map_sokoban\000.txt");
+           // t.CopyTo(0,)
+          
+
+            //로딩한맵데이터에 따라 현재맵에 객체생성해주기
+            for(int y=0; y< mapSizeY; y++)
+            {
+                for(int x=0; x<mapSizeX; y++)
+                {
+                    switch(loadedMap[y,x])
+                    {
+                        //player
+                        case 'p':
+                            //player는 좌표바꿔주기
+                            player._position._x = x;
+                            player._position._y = y;
+                            break;
+
+                        //Hole
+                        case 'o':
+                            nowMap[y,x].Add(new CHole(new Position { _x = x, _y = y }));
+                            break;
+
+                        //그냥 타일
+                        case ' ':
+                            break;
+
+                        //bedrock
+                        case '-':
+                            nowMap[y,x].Add(new CBedrock(new Position { _x = x, _y = y }));
+                            break;
+
+                        //폭탄
+                        case '!':
+                            nowMap[y,x].Add(new CBomb(new Position { _x = x, _y = y }));
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
 
             while (true)
             {
@@ -49,26 +113,105 @@ namespace _004_MySokoban
 
         }
     }
+    
     struct Position
     {
-        public int X;
-        public int Y;
+        public int _x;
+        public int _y;
     }
 
-    class Cplayer
+    //맵에 존재할 수 있는 오브젝트 전부 이 클래스를 상속하도록 함.
+    class CObject
     {
-        //player의 모습
-        private char _symbol = 'P';
+        public CObject(Position pos)
+        {
+            _position = pos;
+        }
+        //오브젝트의 위치
+        public Position _position;
+
+        //기본 심볼
+        public static char _symbol = 's';
+    }
+    class Cplayer : CObject
+    {
+        public Cplayer(Position pos) : base(pos)
+        {
+            _symbol = 'p';
+        }
+
         //player가 가진 돈
         private int _money = 0;
-        //player의 좌표
-        private Position _position = new Position { X = 0, Y = 0 };
         //player가 입력한 키
         public ConsoleKey _inputKey;
         //player의 stage진행상황
         public int _stage;
 
     }
+
+    class CBomb : CObject
+    {
+        public CBomb(Position pos) : base(pos)
+        {
+            _symbol = '!';
+        }
+    }
+
+    class CWall : CObject
+    {
+        public CWall(Position pos) : base(pos)
+        {
+
+        }
+    }
+
+    class CBox : CObject
+    {
+        public CBox(Position pos) : base(pos)
+        {
+        }
+    }
+
+    class CBedrock : CObject
+    {
+        public CBedrock(Position pos) : base(pos)
+        {
+            _symbol = '-';
+        }
+    }
+
+    class CTile : CObject
+    {
+        public CTile(Position pos) : base(pos)
+        {
+        }
+    }
+
+    class CHole : CObject
+    {
+        public CHole(Position pos) : base(pos)
+        {
+            _symbol = 'o';
+        }
+    }
+
+    class CButton : CObject
+    {
+        public CButton(Position pos) : base(pos)
+        {
+        }
+    }
+
+    class CDoor : CObject
+    {
+        public CDoor(Position pos) : base(pos)
+        {
+        }
+    }
+
+
+
+
 
     //Scene의 부모 클래스, Scene의 공통 기능을 담당
     abstract class CbaseScene
@@ -105,13 +248,15 @@ namespace _004_MySokoban
         }
         public override void Update()
         {
-            
+            string path = Directory.GetCurrentDirectory();
+            Console.WriteLine( path);
         }
         public override void Render()
         {
             Console.WriteLine("SOKOBAN");
             //맵출력
             Console.WriteLine("Made by 김태욱(www.github.com/shrek75)");
+            Console.WriteLine("😁😆😁🤣😗😘🤩🤢");
         }
     }
     // 상점 Scene
