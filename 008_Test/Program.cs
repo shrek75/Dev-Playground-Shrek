@@ -13,13 +13,8 @@ namespace _008_Test
         static void Main(string[] args)
         {
 
-            Stack myStack = new Stack();
-            myStack.Push(1);
-            myStack.Push(2);
-
-            Console.WriteLine(myStack.Peek());
-            Console.WriteLine(myStack.Pop());
-            Console.WriteLine(myStack.Pop());
+            var test = Enumerable.Range(1, 10);
+            IEnumerable<int> test2 = Enumerable.Range(1, 100);
         }
 
     }
