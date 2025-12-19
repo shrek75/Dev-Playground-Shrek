@@ -10,21 +10,15 @@ namespace _008_Test
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("시작");
 
-            try
+            int[] arr = { 3, 2, 1, 4, 5 };
+            Array.Sort(arr);
+
+            foreach(int i in arr)
             {
-                Console.WriteLine("try실행");
-                throw new Exception();
-            }
-            catch
-            {
-                Console.WriteLine("캣치~!");
-            }
-            finally
-            {
-                Console.WriteLine("finally실행");
+                Console.Write($"{i} ");
             }
         }
+
     }
 }
