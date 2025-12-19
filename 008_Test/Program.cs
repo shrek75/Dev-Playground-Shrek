@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,13 +13,13 @@ namespace _008_Test
         static void Main(string[] args)
         {
 
-            int[] arr = { 3, 2, 1, 4, 5 };
-            Array.Sort(arr);
+            Stack myStack = new Stack();
+            myStack.Push(1);
+            myStack.Push(2);
 
-            foreach(int i in arr)
-            {
-                Console.Write($"{i} ");
-            }
+            Console.WriteLine(myStack.Peek());
+            Console.WriteLine(myStack.Pop());
+            Console.WriteLine(myStack.Pop());
         }
 
     }
