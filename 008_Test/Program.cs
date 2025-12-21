@@ -14,32 +14,45 @@ namespace _008_Test
         static void Main(string[] args)
         {
 
-            int[] numbers = { 1, 2, 3, 4, 5 };
-            List<int> newNumbers = numbers.Where(n => n > 3).ToList();
-            foreach (int n in newNumbers)
-            {
-                Console.WriteLine(n);
-            }
+            MyClass c = new MyClass();
+            c.MyProperty = 1;
+            Console.WriteLine(c.MyProperty);
+            c.MyProp = 2;
+            Console.WriteLine(c.MyProp);
+          //  c.MyProp2 = 3;
 
-            List<int> nn = new List<int> {1,2,3,4 };
-            Console.WriteLine(nn.Where(n => n % 2 == 0).Sum());
 
-            var newList = new List<int> { 1, 2, 3, 4 };
-            Console.WriteLine(newList.Where(n=>n%2 ==1).Sum());
 
-            int[] arr = { 1, 2, 3, 4, 5 };
-            IEnumerable<int> t = arr.Where(a => a % 2 == 1);
-            foreach(var n in t)
-            { Console.Write(n); }
+            Console.WriteLine(c.MyProp2);
+            Console.WriteLine(MyClass.Name);
 
-            bool[] blns = { true, false, true, false , true};
+            var anony = new { name = "김태욱", age = 27, height = 166 };
+            Console.WriteLine(anony.name);
+        }
+        static void Hello() => Console.WriteLine("Hello");
+        static int Doub(int x) => x * 2;
+        
+        
+        
+    }
+    class MyClass
+    {
+        public int MyProperty { get; set; }
+        private int MyValue { get; set; }
 
-            Console.WriteLine(blns.Length);
-            Console.WriteLine(blns.Count());
-            Console.WriteLine(blns.Count(b=>b == true));
-            Console.WriteLine(blns.Count(b => b == false)                                               );
-
+        private int myprop = 4; 
+        public int MyProp
+        {
+            get { return myprop; }
+            set {  myprop = value; }
         }
 
+        public static string Name { get; set; } = "Hello";
+
+        public int MyProp2 { get; } = 3;
+
+        public int Age { get; private set; }
+        
+        
     }
 }
