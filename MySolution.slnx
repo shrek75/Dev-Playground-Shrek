@@ -11,5 +11,6 @@
   <Project Path="005_scanf/005_scanf.vcxproj" Id="866cb039-626c-481b-bb1d-803c498e5f0b" />
   <Project Path="006_c#다차원배열, c++다차원배열 차이점/006_c#다차원배열, c++다차원배열 차이점.csproj" Id="120b71c8-457b-4cb0-a277-78b393752bfb" />
   <Project Path="007_Test/007_Test.vcxproj" Id="1cb44928-eca9-42ba-ab83-f4c18340f038" />
-  <Project Path="008_Test/008_Test.csproj" Id="e388bc49-4a5f-412b-ad6d-d9e6034bc33d" />
+  <Project Path="008_Test/008_Lotto.csproj" Id="e388bc49-4a5f-412b-ad6d-d9e6034bc33d" />
+  <Project Path="009_Test/009_Test.csproj" Id="1ccb4a80-6241-4c12-a7b8-7a5683cf2bd2" />
 </Solution>
