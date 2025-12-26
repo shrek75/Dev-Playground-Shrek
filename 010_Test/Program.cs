@@ -1,43 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace _010_Test
+public class Solution
 {
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            Past past = new Future();
-            past.Func();
-        }
-
-        
-        
-    }
-
-    public class Past
-    {
-        public virtual void Print()
-        {
-            Console.WriteLine("안녕하세요");
-        }
-
-        public void Func()
-        {
-            Print();
-        }
-    }
-
-    public class Future : Past
-    {
-        public override void  Print() 
-        {
-            Console.WriteLine("안냥~?");
-        }
-    }
     
+    static void Main(string[] args)
+    {
+        MyClass.Func();
+        MyClass myClass = new MyClass();
+       
+    }
+}
+
+class MyClass
+{
+    public static void Func()
+    {
+        Console.WriteLine("Hello");
+    }
+
+    public class m2
+    {
+        public static void Func2()
+        {
+            Console.WriteLine("Hello");
+        }
+    }
+    class m3 : m2
+    {
+        public static void Func3()
+        {
+            Console.WriteLine("Hello");
+        }
+    }
 }
