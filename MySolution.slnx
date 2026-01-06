@@ -15,5 +15,7 @@
   <Project Path="009_Test/009_Pokemon.csproj" Id="1ccb4a80-6241-4c12-a7b8-7a5683cf2bd2" />
   <Project Path="010_Test/010_Test.csproj" Id="a2b40540-9561-41f9-a576-a7a91f450407" />
   <Project Path="012_dotNet/012_dotNet.csproj" Id="e2bf4b4c-c1f7-43b8-bf46-a070797d5e5c" />
+  <Project Path="013_Test/013_Test.csproj" Id="c23dd24f-ef85-4b85-b92e-746ef2c0779d" />
+  <Project Path="014_TEST/014_TEST.csproj" Id="3bb358f1-a01b-4630-aaf0-62d34a3fc46f" />
   <Project Path="_Deque/011_Deque.csproj" Id="8fe8a0ea-e3cc-42f0-b249-b7c926015bbf" />
 </Solution>

@@ -10,94 +10,103 @@ public class Program
 {
     static void Main(string[] args)
     {
-        CardDeck cardDeck = new CardDeck();
-        cardDeck.MixCard();
-
-        for (int i = 0; i < 52; i++)
-        {
-            cardDeck.ShowTop();
-            cardDeck.Draw();
-        }
-        
-        
+        int[,] maps = new int[,] { { 1, 0, 1, 1, 1 }, { 1, 0, 1, 0, 1 }, { 1, 0, 1, 1, 1 }, { 1, 1, 1, 0, 1 }, { 0, 0, 0, 0, 1 } };
+        int a = Solution.solution(maps);
+        Console.WriteLine(a);
     }
 }
 
-class Card
+static class Solution
 {
-    public Card(Shape shape, int num)
+    public static int solution(int[,] maps)
     {
-        _shape = shape;
-        _number = num;
-    }
-    public enum Shape
-    {
-        Spade,
-        Heart,
-        Clover,
-        Diamond
-    }
-
-    private Shape _shape;
-    private int _number;
-
-    //카드정보출력
-    public void Print()
-    {
-        Console.WriteLine($"[{_number}] {_shape.ToString()} ");
-    }
-}
-class CardDeck
-{
-    public CardDeck()
-    {
-        for (int i = 0; i < 52; i++)
+        Node[,] myArr = new Node[maps.GetLength(0),maps.GetLength(1)];
+        for(int y = 0; y< maps.GetLength(0); y++)
         {
-            _unusedCards[++_topIndex] = new Card((Card.Shape)(i / 13) , i % 13 + 1);
-        }
-    }
-
-    private Card[] _usedCards = new Card[52];
-    private Card[] _unusedCards = new Card[52];
-    private int _topIndex = -1; //현재 unusedCards의 맨위 인덱스
-    
-
-
-    //맨위 카드 보기
-    public void ShowTop()
-    {
-        Card card = _unusedCards[_topIndex];
-        Console.Write($" 남은카드수-{_topIndex+1:00}\t ");
-        card.Print();
-    }
-    //맨위 카드 뽑기
-    public void Draw()
-    {
-        if (_topIndex < 0) return;
-        _usedCards[52 - _topIndex - 1] = _unusedCards[_topIndex];
-        _topIndex--;
-    }
-
-    //카드 섞기
-    public void MixCard()
-    {
-        Random random = new Random();
-
-        //새로운 배열 할당 (안하고 Swap으로 구현해도 되긴하는데..)
-        Card[] _newArr = new Card[52];
-
-        //현재 카드수만큼 반복
-        for (int i = 0; i <= _topIndex; i++)
-        {
-            // 0 ~ 남은카드갯수 범위의 랜덤한 index값을 정한다.
-            int index = random.Next(_topIndex - i + 1);
-            // 새로운 배열의 i번째에 랜덤으로 정한 카드를 넣어준다.
-            _newArr[i] = _unusedCards[index];
-            // 기존배열에서 뽑힌카드의 자리에 topIndex자리의 카드를 넣어준다. 
-            _unusedCards[index] = _unusedCards[_topIndex - i];
+            for(int x = 0; x< maps.GetLength(1); x++)
+            {
+                myArr[y, x] = new Node();
+                myArr[y,x].wall = maps[y,x];
+                myArr[y, x].x = x;
+                myArr[y, x].y = y;
+            }
         }
 
-        //새로운 배열을 멤버로 대입
-        _unusedCards = _newArr;
+        Queue<Node> stack = new Queue<Node>();
+        stack.Enqueue(myArr[0,0]);
+        while(stack.Count>0)
+        {
+            Node node = stack.Dequeue();
+
+            //목적지 찾았으면
+            if(node == myArr[myArr.GetLength(0) -1 ,myArr.GetLength(1) - 1]  )
+            {
+                return node.length +1;
+            }
+
+            // 못찾았으면 인접노드들 push
+            int targetX = node.x - 1;
+            int targetY = node.y;
+
+            if(targetX >= 0)
+            {
+                if (myArr[targetY,targetX].wall == 1 && myArr[targetY, targetX].length == 0)
+                {
+                    myArr[targetY, targetX].length = myArr[node.y, node.x].length + 1;
+                    stack.Enqueue(myArr[targetY,targetX]);
+                }
+            }
+
+            targetX = node.x + 1;
+            targetY = node.y;
+
+            if (targetX <= myArr.GetLength(1) - 1)
+            {
+                if (myArr[targetY, targetX].wall == 1 && myArr[targetY, targetX].length == 0)
+                {
+                    myArr[targetY, targetX].length = myArr[node.y, node.x].length + 1;
+                    stack.Enqueue(myArr[targetY, targetX]);
+
+                }
+            }
+
+
+            targetX = node.x;
+            targetY = node.y - 1;
+
+            if (targetY >= 0)
+            {
+                if (myArr[targetY, targetX].wall == 1 && myArr[targetY, targetX].length == 0)
+                {
+                    myArr[targetY, targetX].length = myArr[node.y, node.x].length + 1;
+                    stack.Enqueue(myArr[targetY, targetX]);
+
+                }
+            }
+
+            targetX = node.x;
+            targetY = node.y + 1;
+
+            if (targetY <= myArr.GetLength(0) - 1)
+            {
+                if (myArr[targetY, targetX].wall == 1 && myArr[targetY, targetX].length == 0)
+                {
+                    myArr[targetY, targetX].length = myArr[node.y, node.x].length + 1;
+                    stack.Enqueue(myArr[targetY, targetX]);
+
+                }
+            }
+
+        }
+
+        return -1;
+    }
+
+    class Node
+    {
+        public int x;
+        public int y;
+        public int wall;
+        public int length = 0;
     }
 }
