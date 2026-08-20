@@ -3,18 +3,35 @@
 
 using namespace std;
 
-template <typename T>
-T Foo(T x, T y)
+class CMyClass
 {
-	return x + y;
+public:
+	int& _pData;
+	CMyClass(int param):_pData(param)
+	{
+		cout << _pData << endl;
+
+	}
+	void Print()
+	{
+		cout << _pData << endl;
+	}
+};
+
+void Foo()
+{
+	cout << "안녕하세용가리어카세트리오" << endl;
 }
 
 int wmain()
 {
-	cout << Foo(1.2, 1.3) << endl;
-	cout << Foo(1, 2) << endl;
 
+	int test = 10;
+	CMyClass* a = new CMyClass(test);
 
+	Foo();
+	a->_pData = 20;
+	a->Print();
 	
 	return 0;
 

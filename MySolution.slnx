@@ -20,5 +20,6 @@
   <Project Path="015_게임구조생각/015_게임구조생각.csproj" Id="6882612d-f668-48c8-9948-703cd942a33f" />
   <Project Path="016_Test/016_Test.vcxproj" Id="990d6308-6e56-4c02-a0cc-7617f71801a7" />
   <Project Path="017_Remind/017_Remind.vcxproj" Id="71565a59-d925-4658-b9e2-b7d49bed712d" />
+  <Project Path="018_StringCtrlSample/018_StringCtrlSample.vcxproj" Id="eb3b3f0d-712c-413c-88bd-e4e64ed8baa0" />
   <Project Path="_Deque/011_Deque.csproj" Id="8fe8a0ea-e3cc-42f0-b249-b7c926015bbf" />
 </Solution>
