@@ -3,15 +3,18 @@
 
 using namespace std;
 
-void TestFunc(const CMyString& param)
-{
-	cout << param.GetString() << endl;
-}
 
 
 int main()
 {
-	CMyString strData;
+	CMyString strData, strTest;
 	strData.SetString("Hello");
-	cout << strData.GetString() << endl;
+	strTest.SetString("World");
+
+	CMyString strNewData(strData);
+	cout << strNewData.GetString() << endl;
+
+	strNewData = strTest;
+	cout << strNewData.GetString() << endl;
+
 }

@@ -13,6 +13,10 @@ public:
 	
 	CMyString();
 	~CMyString();
+	CMyString(const CMyString& rhs);
+	CMyString& operator=(const CMyString& rhs);
+	CMyString(const char* pszParam);
+	operator char* ()const;
 
 	int SetString(const char* pszParam);
 	const char* GetString() const;

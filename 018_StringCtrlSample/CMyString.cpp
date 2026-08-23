@@ -15,6 +15,33 @@ CMyString::~CMyString()
 	Release();
 }
 
+CMyString::CMyString(const CMyString& rhs)
+	:m_pszData(NULL),
+	m_nlength(0)
+{
+	SetString(rhs.GetString());
+}
+
+CMyString& CMyString::operator=(const CMyString& rhs)
+{
+	// 자기자신을 대입하는거면 해제를 해버리는구나 a = a;
+	if(this != &rhs)
+		SetString(rhs.GetString());
+
+
+	return *this;
+}
+
+CMyString::CMyString(const char* pszParam)
+{
+	SetString(pszParam);
+}
+
+CMyString::operator char* () const
+{
+	return m_pszData;
+}
+
 int CMyString::SetString(const char* pszParam)
 {
 	Release();

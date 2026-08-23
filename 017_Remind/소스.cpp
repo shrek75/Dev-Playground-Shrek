@@ -6,52 +6,103 @@ using namespace std;
 class CMyClass
 {
 public:
-	int& _pData;
-	CMyClass(int param):_pData(param)
+	CMyClass()
 	{
-		cout << _pData << endl;
-
+		cout << "CMyClass()" << endl;
+	
+		pData = new int(10);
 	}
+
+	
+
+	~CMyClass()
+	{
+		cout << "~CMyClass()" << endl;
+
+		//delete pData;
+	}
+
+	CMyClass& operator=(const CMyClass& rhs)
+	{
+		cout << "operator=(const CMyClass&)" << endl;
+		*this->pData = *rhs.pData;
+		
+		return *this;
+	}
+
+	CMyClass& operator=(CMyClass&& rhs)
+	{
+		cout << "operator=(const CMyClass&&)" << endl;
+		this->pData = rhs.pData;
+		rhs.pData = nullptr;
+
+		return *this;
+	}
+
+	CMyClass(const CMyClass& rhs)
+	{
+		cout << "CMyClass(const CMyClass &)" << endl;
+		
+		pData = new int;
+		*pData = *rhs.pData;
+	}
+	CMyClass(CMyClass&& rhs)
+	{
+		cout << "CMyClass(const CMyClass &&)" << endl;
+
+		pData = rhs.pData;
+		rhs.pData = nullptr;
+	}
+
+	explicit CMyClass(int param)
+	{
+		cout << "CMyClass(int)" << endl;
+		pData = new int(param);
+	}
+
+	explicit operator int(void)
+	{
+		return 1;
+	}
+
 	void Print()
 	{
-		cout << _pData << endl;
+		cout << *pData << endl;
 	}
 
-	void TestFunc() const
+	void TestFunc3() const
 	{
-		mu_int++;
-		//my_int++;
+		int a = 3;
+		a++;
 	}
 
-	void TestFunc2(const int& param)
-	{
-		int& myConstCast = const_cast<int&>(param);
-		myConstCast++;
-		
-	}
-
-	int my_int = 5;
-	mutable int mu_int = 5;
+private:
+	int* pData = nullptr;
 };
 
-void Foo()
+void TestFunc(const CMyClass& param)
 {
-	cout << "안녕하세용가리어카세트리오" << endl;
+	cout << "TestFunc()" << endl;
 }
+
+CMyClass TestFunc2(CMyClass param)
+{
+	cout << "TestFunc2() begin" << endl;
+	
+	cout << "TestFunc2() end" << endl;
+
+	return param;
+}
+
+
 
 int wmain()
 {
+	cout << "시작" << endl;
 
-	int test = 10;
-	CMyClass* a = new CMyClass(test);
+	//CMyClass c;
+	TestFunc2(30);
 
-	Foo();
-	a->_pData = 20;
-	a->Print();
-
-	int t(50);
-	a->TestFunc2(t);
-	cout << t;
-	return 0;
+	cout << "끝" << endl;
 
 }
