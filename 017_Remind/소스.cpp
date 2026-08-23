@@ -16,6 +16,22 @@ public:
 	{
 		cout << _pData << endl;
 	}
+
+	void TestFunc() const
+	{
+		mu_int++;
+		//my_int++;
+	}
+
+	void TestFunc2(const int& param)
+	{
+		int& myConstCast = const_cast<int&>(param);
+		myConstCast++;
+		
+	}
+
+	int my_int = 5;
+	mutable int mu_int = 5;
 };
 
 void Foo()
@@ -32,7 +48,10 @@ int wmain()
 	Foo();
 	a->_pData = 20;
 	a->Print();
-	
+
+	int t(50);
+	a->TestFunc2(t);
+	cout << t;
 	return 0;
 
 }

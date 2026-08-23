@@ -4,22 +4,23 @@
 using namespace std;
 
 CMyString::CMyString()
-	:m_pszData(NULL)
+	:m_pszData(NULL),
+	m_nlength(0)
 {
-	m_nlength = 0;
+	
 }
 
 CMyString::~CMyString()
 {
+	Release();
 }
 
 int CMyString::SetString(const char* pszParam)
 {
+	Release();
+
 	//인자 유효성 체크
 	if (pszParam == NULL) return -1;
-
-	//이미 할당되어있는 메모리 있는지 체크
-	if (m_pszData != NULL) Release();
 
 	//복사할 문자 길이 체크
 	m_nlength = strlen(pszParam);
@@ -30,14 +31,16 @@ int CMyString::SetString(const char* pszParam)
 	return m_nlength;
 }
 
-const char* CMyString::GetString()
+const char* CMyString::GetString() const
 {
 	return m_pszData;
 }
 
 void CMyString::Release()
 {
-	if (m_nlength <= 0) return;
-	delete[] m_pszData;
+	if (m_pszData != NULL)
+		delete[] m_pszData;
+	m_pszData = NULL;
+	m_nlength = 0;
 	return;
 }
