@@ -1,4 +1,4 @@
-#include "CMyString.h"
+﻿#include "CMyString.h"
 #include <iostream>
 
 using namespace std;
@@ -70,6 +70,10 @@ int CMyString::SetString(const char* pszParam)
 
 	m_pszData = new char[m_nlength + 1];
 	strcpy_s(m_pszData, m_nlength+1, pszParam);
+	
+	//미래를 호출한다!
+	OnSetString(m_pszData, m_nlength);
+
 	return m_nlength;
 }
 
@@ -162,4 +166,9 @@ int CMyString::operator!=(const CMyString& rhs)
 		if (strcmp(m_pszData, rhs.m_pszData) == 0)
 			return 0;
 	return 1;
+}
+
+void CMyString::OnSetString(char* pszData, int nLength)
+{
+
 }

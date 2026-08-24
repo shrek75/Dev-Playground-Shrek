@@ -1,108 +1,51 @@
 ﻿#include <iostream>
 
-
 using namespace std;
 
-class CMyClass
+class CMyData
 {
 public:
-	CMyClass()
+	CMyData()
 	{
-		cout << "CMyClass()" << endl;
-	
-		pData = new int(10);
+		cout << "CMyData()" << endl;
 	}
 
-	
+	virtual ~CMyData() {}
+	virtual void TestFunc1() {}
+	virtual void TestFunc2() {}
 
-	~CMyClass()
-	{
-		cout << "~CMyClass()" << endl;
-
-		//delete pData;
-	}
-
-	CMyClass& operator=(const CMyClass& rhs)
-	{
-		cout << "operator=(const CMyClass&)" << endl;
-		*this->pData = *rhs.pData;
-		
-		return *this;
-	}
-
-	CMyClass& operator=(CMyClass&& rhs)
-	{
-		cout << "operator=(const CMyClass&&)" << endl;
-		this->pData = rhs.pData;
-		rhs.pData = nullptr;
-
-		return *this;
-	}
-
-	CMyClass(const CMyClass& rhs)
-	{
-		cout << "CMyClass(const CMyClass &)" << endl;
-		
-		pData = new int;
-		*pData = *rhs.pData;
-	}
-	CMyClass(CMyClass&& rhs)
-	{
-		cout << "CMyClass(const CMyClass &&)" << endl;
-
-		pData = rhs.pData;
-		rhs.pData = nullptr;
-	}
-
-	explicit CMyClass(int param)
-	{
-		cout << "CMyClass(int)" << endl;
-		pData = new int(param);
-	}
-
-	explicit operator int(void)
-	{
-		return 1;
-	}
-
-	void Print()
-	{
-		cout << *pData << endl;
-	}
-
-	void TestFunc3() const
-	{
-		int a = 3;
-		a++;
-	}
-
-private:
-	int* pData = nullptr;
+	void TestFunc3() {}
 };
 
-void TestFunc(const CMyClass& param)
+class CMyDataEx : public CMyData
 {
-	cout << "TestFunc()" << endl;
-}
+public:
+	CMyDataEx()
+	{
+		cout << "CMyDataEx()" << endl;
 
-CMyClass TestFunc2(CMyClass param)
+	}
+
+	virtual ~CMyDataEx() {}
+//	virtual void TestFunc1() {}
+	virtual void TestFunc2()
+	{
+		cout << "TestFunc2()" << endl;
+	}
+};
+
+int main()
 {
-	cout << "TestFunc2() begin" << endl;
-	
-	cout << "TestFunc2() end" << endl;
+	const int dieNum = 4;
+	int& what = const_cast<int&>(dieNum);
+	what = 5;
+	cout << dieNum << endl;
 
-	return param;
-}
+	CMyData* pData = new CMyDataEx;
+	pData->TestFunc2();
+	delete pData;
 
+	pData->TestFunc3();
 
-
-int wmain()
-{
-	cout << "시작" << endl;
-
-	//CMyClass c;
-	TestFunc2(30);
-
-	cout << "끝" << endl;
-
+	return 0;
 }
