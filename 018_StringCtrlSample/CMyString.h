@@ -14,6 +14,7 @@ public:
 	CMyString();
 	~CMyString();
 	CMyString(const CMyString& rhs);
+	CMyString(CMyString&& rhs);
 	CMyString& operator=(const CMyString& rhs);
 	CMyString(const char* pszParam);
 	operator char* ()const;
@@ -21,5 +22,18 @@ public:
 	int SetString(const char* pszParam);
 	const char* GetString() const;
 	void Release();
+
+	int GetLength() const;
+
+	int Append(const char* pszParam);
+
+	CMyString operator +(const CMyString& rhs);
+	CMyString& operator +=(const CMyString& rhs);
+
+	char& operator[](int index);
+	char operator[](int index) const;
+
+	int operator==(const CMyString& rhs);
+	int operator!=(const CMyString& rhs);
 };
 

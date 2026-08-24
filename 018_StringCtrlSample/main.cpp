@@ -1,20 +1,22 @@
-#include "CMyString.h"
+#include "CMyStringEx.h"
 #include <iostream>
 
 using namespace std;
 
 
 
+
+
 int main()
 {
-	CMyString strData, strTest;
-	strData.SetString("Hello");
-	strTest.SetString("World");
+	CMyStringEx strTest;
+	strTest.SetString("I am a boy.");
+	cout << strTest << endl;
 
-	CMyString strNewData(strData);
-	cout << strNewData.GetString() << endl;
+	int nIndex = strTest.Find("am");
+	cout << "Index : " << nIndex << endl;
 
-	strNewData = strTest;
-	cout << strNewData.GetString() << endl;
+
+	return 0;
 
 }
