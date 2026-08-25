@@ -172,3 +172,11 @@ void CMyString::OnSetString(char* pszData, int nLength)
 {
 
 }
+
+CMyString operator+(const char* pszParam, const CMyString& strParam)
+{
+	CMyString result(pszParam);
+	result.Append(strParam.m_pszData);
+
+	return result;
+}

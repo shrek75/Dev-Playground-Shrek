@@ -9,9 +9,7 @@ using namespace std;
 
 int main()
 {
-	CMyStringEx strTest;
-	strTest.SetString("멍멍이아들");
-	cout << strTest << endl;
-
-	return 0;
+	CMyString b("World"), c;
+	c = "Hello" + b;
+	cout << c << endl;
 }
