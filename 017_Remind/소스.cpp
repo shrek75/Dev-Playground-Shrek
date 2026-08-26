@@ -3,6 +3,14 @@
 
 using namespace std;
 
+struct MyStruct
+{
+	char szName[32];
+
+	MyStruct* pNext;
+};
+
+
 class CMyData
 {
 public:
