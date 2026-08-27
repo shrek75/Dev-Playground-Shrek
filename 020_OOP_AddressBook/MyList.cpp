@@ -1,11 +1,13 @@
 ﻿#include "MyList.h"
 #include <conio.h>
 #include <string>
+#include "UserData.h"
 
 #define DATA_FILE_NAME "MyAddress.dat"
 
-MyList::MyList()
+MyList::MyList(MyNode* head)
 {
+	_head = head;
 	LoadList(DATA_FILE_NAME);
 }
 
@@ -17,8 +19,8 @@ MyList::~MyList()
 
 void MyList::ReleaseList()
 {
-	UserData* pDelete;
-	UserData* pNext = _head._next;
+	MyNode* pDelete;
+	MyNode* pNext = _head->_next;
 	while (pNext != nullptr)
 	{
 		pDelete = pNext;
@@ -26,7 +28,7 @@ void MyList::ReleaseList()
 
 		delete pDelete;
 	}
-	_head._next = nullptr;
+	_head->_next = nullptr;
 }
 
 int MyList::LoadList(const char* pszFileName)
@@ -43,7 +45,7 @@ int MyList::LoadList(const char* pszFileName)
 
 	while (fread(&user, sizeof(UserData), 1, fp))
 	{
-		AddNewNode(user._name, user._phone);
+		AddNewNode(new UserData(user.GetName(),user.GetPhone()));
 	}
 
 	fclose(fp);
@@ -54,7 +56,7 @@ int MyList::LoadList(const char* pszFileName)
 int MyList::SaveList(const char* pszFileName)
 {
 	FILE* fp = NULL;
-	UserData* pTmp = _head._next;
+	MyNode* pTmp = _head->_next;
 
 	fopen_s(&fp, pszFileName, "wb");
 
@@ -69,7 +71,7 @@ int MyList::SaveList(const char* pszFileName)
 	while (pTmp != NULL)
 	{
 		if (fwrite(pTmp, sizeof(UserData), 1, fp) != 1)
-			printf("ERROR: %s에 대한 정보를 저장하는데 실패했습니다.", pTmp->_name);
+			printf("ERROR: %s에 대한 정보를 저장하는데 실패했습니다.", pTmp->GetKey());
 
 		pTmp = pTmp->_next;
 	}
@@ -79,53 +81,46 @@ int MyList::SaveList(const char* pszFileName)
 	return 1;
 }
 
-UserData* MyList::FindNode(const char* pszName)
+MyNode* MyList::FindNode(const char* _key)
 {
-	UserData* pTmp = _head._next;
+	MyNode* pTmp = _head->_next;
 	while (pTmp != nullptr)
 	{
-		if (strcmp(pTmp->GetName(), pszName) == 0)
+		if (strcmp(pTmp->GetKey(), _key) == 0)
 			break;
 		pTmp = pTmp->_next;
 	}
 	return pTmp;
 }
 
-int MyList::AddNewNode(const char* pszName, const char* pszPhone)
+int MyList::AddNewNode(MyNode* node)
 {
-	if (FindNode(pszName) != nullptr) return 0;
+	if (FindNode(node->GetKey()) != nullptr) return 0;
 
-	UserData* pUser = new UserData();
-	strcpy_s(pUser->_name, sizeof(pUser->_name), pszName);
-	strcpy_s(pUser->_phone, sizeof(pUser->_phone), pszPhone);
-
-	pUser->_next = _head._next;
-	_head._next = pUser;
+	node->_next = _head->_next;
+	_head->_next = node;
 
 	return 1;
 }
 
 void MyList::PrintAll()
 {
-	UserData* pData = _head._next;
+	MyNode* pData = _head->_next;
 	while (pData != NULL)
 	{
-		printf("[%p] %s\t%s [%p]\n",
-			pData,
-			pData->GetName(), pData->GetPhone(),
-			pData->GetNext());
+		pData->PrintNode();
 		pData = pData->_next;
 	}
 
 }
 
-int MyList::RemoveNode(const char* szName)
+int MyList::RemoveNode(const char* key)
 {
-	UserData* pTmp = _head._next;
-	UserData* prev = &_head;
+	MyNode* pTmp = _head->_next;
+	MyNode* prev = _head;
 	while (pTmp != nullptr)
 	{
-		if (strcmp(pTmp->GetName(), szName) == 0)
+		if (strcmp(pTmp->GetKey(), key) == 0)
 		{
 			prev->_next = pTmp->_next;
 			delete pTmp;

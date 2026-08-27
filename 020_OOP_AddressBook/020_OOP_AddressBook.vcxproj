@@ -140,12 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="MyList.h" />
+    <ClInclude Include="MyNode.h" />
     <ClInclude Include="UserData.h" />
     <ClInclude Include="UserInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyList.cpp" />
+    <ClCompile Include="MyNode.cpp" />
     <ClCompile Include="UserData.cpp" />
     <ClCompile Include="UserInterface.cpp" />
   </ItemGroup>

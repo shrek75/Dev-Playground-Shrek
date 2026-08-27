@@ -1,4 +1,5 @@
 ﻿#include "UserInterface.h"
+#include "UserData.h"
 #include <iostream>
 #include <conio.h>
 
@@ -39,13 +40,13 @@ void UserInterface::Add()
 	getchar();
 
 
-	_list.AddNewNode(szName, szPhone);
+	_list.AddNewNode(new UserData(szName,szPhone));
 }
 
 void UserInterface::Search()
 {
 	char szName[32] = { 0 };
-	UserData* pNode = NULL;
+	MyNode* pNode = NULL;
 
 	printf("Input name :");
 	gets_s(szName, sizeof(szName));
@@ -55,10 +56,10 @@ void UserInterface::Search()
 	pNode = _list.FindNode(szName);
 	if (pNode != NULL)
 	{
-		printf("[%p] %s\t%s [%p]\n",
+		printf("[%p]\t[%p]\n",
 			pNode,
-			pNode->GetName(), pNode->GetPhone(),
 			pNode->GetNext());
+		pNode->PrintNode();
 		_getch();
 
 	}

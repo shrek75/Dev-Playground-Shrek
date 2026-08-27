@@ -1,26 +1,26 @@
 ﻿#pragma once
 
-#include "UserData.h"
+#include "MyNode.h"
 
 class MyList
 {
 public:
-	MyList();
+	MyList(MyNode* head);
 	~MyList();
 
 protected:
 	void ReleaseList();
 	int LoadList(const char* pszFileName);
 	int SaveList(const char* pszFileName);
-		UserData _head;
+	MyNode* _head;
 
 public:
-	UserData* FindNode(const char* pszName);
-	int AddNewNode(const char* pszName, const char* pszPhone);
+	MyNode* FindNode(const char* key);
+	int AddNewNode(MyNode* node);
 	
 	void PrintAll();
 
-	int RemoveNode(const char* szName);
+	int RemoveNode(const char* key);
 
 	
 };
