@@ -3,46 +3,21 @@
 
 using namespace std;
 
-struct MyStruct
+void TestFunc1()
 {
-	char szName[32];
+	cout << "TestFunc1()" << endl;
+}
 
-	MyStruct* pNext;
-};
-
-
-class CMyData
+void TestFunc2()
 {
-public:
-	CMyData()
-	{
-		cout << "CMyData" << endl;
-	}
-
-	~CMyData()
-	{
-		cout << "~CMyData()" << endl;
-	}
-};
+	int a = 3;
+	int b = 4;
+	cout << a + b << endl;
+	TestFunc1();
+}
 
 int main()
 {	
-	{
-		cout << "start!" << endl;
-		shared_ptr<CMyData> ptr1(new CMyData);
-
-		cout << ptr1.use_count() << endl;
-
-		{
-			shared_ptr<CMyData> ptr2 = ptr1;
-			cout << ptr1.use_count() << endl;
-
-		}
-		cout << ptr1.use_count() << endl;
-	}
-	cout << "end!" << endl;
+	TestFunc2();
 	
-	unique_ptr<CMyData> ptr3(new CMyData);
-	// unique_ptr<CMyData> ptr4 = ptr3;
-	return 0;
 }
