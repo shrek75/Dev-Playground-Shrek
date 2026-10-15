@@ -1,32 +1,19 @@
 #include <iostream>
+#include <Windows.h>
 using namespace std;
 
-static int test;
 
-class M
-{
-public:
-	static int _count;
-	int data;
-	M()
-	{
-		data = 0;
-		_count = 1000;
-	}
-};
-int M::_count = 1;
-
-void TestFunc()
-{
-	M myclass;
-	cout << myclass._count << endl;
-}
-
-int main() {
+int wmain(int argc, WCHAR* argv[]) {
+	DWORD val1, val2;
+	val1 = _wtoi(argv[1]);
+	val2 = _wtoi(argv[2]);
 	
-	TestFunc();
-	cout << M::_count << endl;
+	fputws(argv[0], stdout);
+	fputws(L"\n", stdout);
+	wprintf(L"%d + %d = %d", val1, val2, val1 + val2);
 
-	//g_x = 4;
+	_getwch();
+	return 0;
+	
 	
 }
