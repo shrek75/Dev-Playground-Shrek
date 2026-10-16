@@ -2,18 +2,24 @@
 #include <Windows.h>
 using namespace std;
 
+class Test
+{
+public:
+	int a;
+};
+
+inline int TestFunc()
+{
+	int a = 110;
+	int b = 13;
+	return a + b;
+}
+
+
 
 int wmain(int argc, WCHAR* argv[]) {
-	DWORD val1, val2;
-	val1 = _wtoi(argv[1]);
-	val2 = _wtoi(argv[2]);
 	
-	fputws(argv[0], stdout);
-	fputws(L"\n", stdout);
-	wprintf(L"%d + %d = %d", val1, val2, val1 + val2);
+	char a[] = "안녕";
+	
 
-	_getwch();
-	return 0;
-	
-	
 }

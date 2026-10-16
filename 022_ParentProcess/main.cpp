@@ -6,44 +6,36 @@
 int wmain(int argc, WCHAR* argv[])
 {
 	STARTUPINFO si = { 0 };
-	PROCESS_INFORMATION pi;
-
+	PROCESS_INFORMATION pi1, pi2;
 	si.cb = sizeof(si);
-	si.dwFlags = STARTF_USEPOSITION | STARTF_USESIZE;
-	si.dwX = 100;
-	si.dwY = 200;
-	si.dwXSize = 300;
-	si.dwYSize = 200;
-	si.lpTitle = const_cast<LPWSTR>(L"I am a boy");
-	WCHAR command[] = L"AdderProcess.exe 33 66";
-	WCHAR cDir[DIR_LEN];
-	BOOL state;
 
-	GetCurrentDirectory(DIR_LEN, cDir);
-	fputws(cDir, stdout);
-	fputws(L"\n", stdout);
+	WCHAR t[DIR_LEN];
+	GetCurrentDirectory(DIR_LEN, t);
 
-	SetCurrentDirectory(L"C:\\WinSystem");
+	wprintf(L"Current directory: %s\n", t);
 
-	GetCurrentDirectory(DIR_LEN, cDir);
-	fputws(cDir, stdout);
-	fputws(L"\n", stdout);
+	WCHAR command1[] = L"023_ChildProcess.exe 1 5";
+	WCHAR command2[] = L"023_ChildProcess.exe 6 10";
 
-	state = CreateProcess(
-		NULL,
-		command,
-		NULL, NULL, TRUE,
-		CREATE_NEW_CONSOLE,
-		NULL, NULL, &si, &pi
-	);
+	CreateProcess(NULL, command1, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi1);
+	CreateProcess(NULL, command2, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi2);
 
-	if(state)
-		fputws(L"Process created successfully\n", stdout);
-	else
-		fputws(L"Process creation failed\n", stdout);
+	
+	int sum1, sum2, sum3 = 0;
+	WaitForSingleObject(pi1.hProcess, INFINITE);
+	WaitForSingleObject(pi2.hProcess, INFINITE);
 
-	// wprintf(L"%d", GetLastError());
-	return 0;
+	
 
+	GetExitCodeProcess(pi1.hProcess, (LPDWORD)&sum1);
+	GetExitCodeProcess(pi2.hProcess, (LPDWORD)&sum2);
+
+
+	CloseHandle(pi1.hProcess);
+	CloseHandle(pi2.hProcess);
+
+	sum3 = sum1 + sum2;
+
+	wprintf(L"Sum of 1 to 10 is: %d\n", sum3);
 
 }
