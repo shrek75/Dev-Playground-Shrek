@@ -1,25 +1,22 @@
-#include <iostream>
+﻿#include <iostream>
 #include <Windows.h>
 using namespace std;
 
-class Test
-{
-public:
-	int a;
-};
-
-inline int TestFunc()
-{
-	int a = 110;
-	int b = 13;
-	return a + b;
-}
-
-
-
-int wmain(int argc, WCHAR* argv[]) {
+int wmain() {
 	
-	char a[] = "안녕";
-	
+	unsigned char a, b, c;
+	a = 0b10101010;
+	b = 0b00110011;
+	c = 0b10011001;
 
+	printf("%02x\n", a);
+	printf("%02x\n", b);
+	printf("%02x\n", c);
+
+	printf("%02x\n", b^c);
+	printf("%02x\n", a^c);
+	printf("%02x\n", a ^ b);
+
+
+	
 }
