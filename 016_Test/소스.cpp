@@ -1,22 +1,49 @@
 ﻿#include <iostream>
 #include <Windows.h>
+#include <locale.h>
 using namespace std;
 
+#define MAX_THREADS (1024 * 10)
+
+DWORD WINAPI ThreadProc(LPVOID lpParam)
+{
+	DWORD threadNum = (DWORD)lpParam;
+
+	while (1)
+	{
+		wprintf(L"Thread num : %d \n", threadNum);
+		Sleep(5000);
+	}
+
+	return 0;
+}
+
+DWORD cntOfThreads = 0;
+
 int wmain() {
+	setlocale(LC_ALL, "Korean");
 	
-	unsigned char a, b, c;
-	a = 0b10101010;
-	b = 0b00110011;
-	c = 0b10011001;
+	DWORD dwThreadId[MAX_THREADS];
+	HANDLE hThread[MAX_THREADS];
 
-	printf("%02x\n", a);
-	printf("%02x\n", b);
-	printf("%02x\n", c);
+	while(1)
+	{
+		hThread[cntOfThreads] = 
+			CreateThread(NULL, 1024 * 512 , ThreadProc, (LPVOID)cntOfThreads, 0, &dwThreadId[cntOfThreads]);
 
-	printf("%02x\n", b^c);
-	printf("%02x\n", a^c);
-	printf("%02x\n", a ^ b);
+		if (hThread[cntOfThreads] == NULL)
+		{
+			wprintf(L"maximum thread count : %d \n", cntOfThreads);
+			break;
+		}
 
+		cntOfThreads++;
+	}
 
-	
+	for (DWORD i = 0; i < cntOfThreads; i++)
+	{
+		CloseHandle(hThread[i]);
+	}
+
+	return 0;
 }
