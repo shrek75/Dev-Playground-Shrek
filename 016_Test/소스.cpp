@@ -5,10 +5,24 @@
 #define THREAD_NUMS 6
 
 int total = 0;
+HANDLE hMutex;
+
+//CRITICAL_SECTION criticalSection;
+
+DWORD AcquireMutex(HANDLE hMutex)
+{
+	return WaitForSingleObject(hMutex, INFINITE);
+}
+
 
 void IncreaseCount()
 {
+
+	//EnterCriticalSection(&criticalSection);
+	AcquireMutex(hMutex);
 	total++;
+	ReleaseMutex(hMutex);
+	//LeaveCriticalSection(&criticalSection);
 }
 
 unsigned int __stdcall ThreadProc(LPVOID lpParam)
@@ -22,6 +36,8 @@ unsigned int __stdcall ThreadProc(LPVOID lpParam)
 
 int main()
 {
+	hMutex = CreateMutex(NULL, FALSE, NULL);
+	//InitializeCriticalSection(&criticalSection);
 	HANDLE hThreads[THREAD_NUMS];
 	DWORD threadIDs[THREAD_NUMS];
 
@@ -50,6 +66,8 @@ int main()
 
 	std::cout << "토탈 : " << total << std::endl;
 
+	//DeleteCriticalSection(&criticalSection);
+	CloseHandle(hMutex);
 	return 0;
 
 }
