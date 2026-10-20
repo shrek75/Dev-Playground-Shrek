@@ -1,49 +1,55 @@
 ﻿#include <iostream>
 #include <Windows.h>
-#include <locale.h>
-using namespace std;
+#include <process.h>
 
-#define MAX_THREADS (1024 * 10)
+#define THREAD_NUMS 6
 
-DWORD WINAPI ThreadProc(LPVOID lpParam)
+int total = 0;
+
+void IncreaseCount()
 {
-	DWORD threadNum = (DWORD)lpParam;
+	total++;
+}
 
-	while (1)
+unsigned int __stdcall ThreadProc(LPVOID lpParam)
+{
+	for (int i = 0; i < 1000; i++)
 	{
-		wprintf(L"Thread num : %d \n", threadNum);
-		Sleep(5000);
+		IncreaseCount();
 	}
-
 	return 0;
 }
 
-DWORD cntOfThreads = 0;
+int main()
+{
+	HANDLE hThreads[THREAD_NUMS];
+	DWORD threadIDs[THREAD_NUMS];
 
-int wmain() {
-	setlocale(LC_ALL, "Korean");
-	
-	DWORD dwThreadId[MAX_THREADS];
-	HANDLE hThread[MAX_THREADS];
-
-	while(1)
+	for (int i = 0; i < THREAD_NUMS; i++)
 	{
-		hThread[cntOfThreads] = 
-			CreateThread(NULL, 1024 * 512 , ThreadProc, (LPVOID)cntOfThreads, 0, &dwThreadId[cntOfThreads]);
-
-		if (hThread[cntOfThreads] == NULL)
+		hThreads[i] = (HANDLE)_beginthreadex(NULL, 0, ThreadProc, NULL, CREATE_SUSPENDED, (unsigned int*) & threadIDs[i]);
+		if (hThreads[i] == NULL)
 		{
-			wprintf(L"maximum thread count : %d \n", cntOfThreads);
-			break;
+			std::cout << "쓰레드 생성실패" << std::endl;
+			return 0;
 		}
-
-		cntOfThreads++;
 	}
 
-	for (DWORD i = 0; i < cntOfThreads; i++)
+	for (int i = 0; i < THREAD_NUMS; i++)
 	{
-		CloseHandle(hThread[i]);
+		ResumeThread(hThreads[i]);
 	}
+
+	WaitForMultipleObjects(THREAD_NUMS, hThreads, TRUE, INFINITE);
+	
+	for (int i = 0; i < THREAD_NUMS; i++)
+	{
+		CloseHandle(hThreads[i]);
+	}
+
+
+	std::cout << "토탈 : " << total << std::endl;
 
 	return 0;
+
 }
