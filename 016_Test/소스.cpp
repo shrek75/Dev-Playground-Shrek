@@ -2,72 +2,58 @@
 #include <Windows.h>
 #include <process.h>
 
-#define THREAD_NUMS 6
+unsigned int WINAPI OutputThreadFunction(LPVOID lpParam);
 
-int total = 0;
-HANDLE hMutex;
-
-//CRITICAL_SECTION criticalSection;
-
-DWORD AcquireMutex(HANDLE hMutex)
-{
-	return WaitForSingleObject(hMutex, INFINITE);
-}
-
-
-void IncreaseCount()
-{
-
-	//EnterCriticalSection(&criticalSection);
-	AcquireMutex(hMutex);
-	total++;
-	ReleaseMutex(hMutex);
-	//LeaveCriticalSection(&criticalSection);
-}
-
-unsigned int __stdcall ThreadProc(LPVOID lpParam)
-{
-	for (int i = 0; i < 1000; i++)
-	{
-		IncreaseCount();
-	}
-	return 0;
-}
+char string[100];
+HANDLE hEvent;
 
 int main()
 {
-	hMutex = CreateMutex(NULL, FALSE, NULL);
-	//InitializeCriticalSection(&criticalSection);
-	HANDLE hThreads[THREAD_NUMS];
-	DWORD threadIDs[THREAD_NUMS];
+	HANDLE hThread;
+	DWORD dwThreadID;
 
-	for (int i = 0; i < THREAD_NUMS; i++)
+	hEvent = CreateEvent(
+		NULL,
+		TRUE,
+		FALSE,
+		NULL
+	);
+
+	if (hEvent == NULL)
 	{
-		hThreads[i] = (HANDLE)_beginthreadex(NULL, 0, ThreadProc, NULL, CREATE_SUSPENDED, (unsigned int*) & threadIDs[i]);
-		if (hThreads[i] == NULL)
-		{
-			std::cout << "쓰레드 생성실패" << std::endl;
-			return 0;
-		}
+		fputs("Event object creation error\n", stdout);
+		return -1;
 	}
-
-	for (int i = 0; i < THREAD_NUMS; i++)
-	{
-		ResumeThread(hThreads[i]);
-	}
-
-	WaitForMultipleObjects(THREAD_NUMS, hThreads, TRUE, INFINITE);
 	
-	for (int i = 0; i < THREAD_NUMS; i++)
+	hThread = (HANDLE)_beginthreadex(
+		NULL, 0,
+		OutputThreadFunction,
+		NULL, 0,
+		(unsigned int*)&dwThreadID
+	);
+
+	if (hThread == 0)
 	{
-		CloseHandle(hThreads[i]);
+		fputs("Thread creation error \n", stdout);
+		return -1;
 	}
 
+	fputs("Insert String : ",stdout);
+	fgets(string, 30, stdin);
 
-	std::cout << "토탈 : " << total << std::endl;
+	SetEvent(hEvent);
 
-	//DeleteCriticalSection(&criticalSection);
-	CloseHandle(hMutex);
+	WaitForSingleObject(hThread, INFINITE);
+	CloseHandle(hThread);
+	CloseHandle(hEvent);
+}
+
+unsigned int __stdcall OutputThreadFunction(LPVOID lpParam)
+{
+	WaitForSingleObject(hEvent, INFINITE);
+
+	fputs("Output string : ", stdout);
+	fputs(string, stdout);
+
 	return 0;
-
 }
