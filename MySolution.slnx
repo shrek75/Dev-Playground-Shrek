@@ -25,6 +25,7 @@
   <Project Path="021_DynamicArray/021_DynamicArray.vcxproj" Id="cbc51993-0a8c-4456-8675-b12578fb6387" />
   <Project Path="022_ParentProcess/022_ParentProcess.vcxproj" Id="d1867734-f745-47f5-920a-ed14eb3c5041" />
   <Project Path="023_ChildProcess/023_ChildProcess.vcxproj" Id="c87c741c-9bfc-447c-adf9-6d9be962dbf2" />
+  <Project Path="024_ThreadPool/024_ThreadPool.vcxproj" Id="b59a0d1e-a712-4152-b3ed-7f34dc37be2d" />
   <Project Path="CStyleAddressBook/CStyleAddressBook.vcxproj" Id="3bd14598-b089-4676-904a-3aa224163846" />
   <Project Path="_Deque/011_Deque.csproj" Id="8fe8a0ea-e3cc-42f0-b249-b7c926015bbf" />
 </Solution>
