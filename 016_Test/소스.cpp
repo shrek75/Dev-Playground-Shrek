@@ -3,25 +3,27 @@
 
 int main()
 {
-	HANDLE hTimer = NULL;
-	LARGE_INTEGER liDueTime;
+	setlocale(LC_ALL, "Korean");
+	WCHAR fileName[] = L"data.txt";
+	WCHAR fileData[] = L"Just test String~";
+	
+	HANDLE hFile = CreateFile(
+		fileName, GENERIC_WRITE, FILE_SHARE_WRITE,
+		0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+	);
 
-	liDueTime.QuadPart = -100000000;
-
-	hTimer = CreateWaitableTimer(NULL, FALSE, NULL);
-	if (!hTimer)
+	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		printf("CreateWaitableTimer failed (%d) \n", GetLastError());
+		wprintf(L"FILE CREATION FAULT");
 		return -1;
 	}
 	
-	SetWaitableTimer(hTimer, &liDueTime, 5000, NULL, NULL, FALSE);
+	DWORD numOfByteWritten = 0;
+	WriteFile(
+		hFile, fileData, sizeof(fileData), &numOfByteWritten, NULL);
+	
+	wprintf(L"Written data size : %u\n", numOfByteWritten);
+	CloseHandle(hFile);
 
-	while (1)
-	{
-		WaitForSingleObject(hTimer, INFINITE);
-		printf("Timer was signaled\n");
-		MessageBeep(MB_ICONEXCLAMATION);
-	}
 	return 0;
 }
