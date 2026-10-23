@@ -1,29 +1,19 @@
 ﻿#include <iostream>
-#include <Windows.h>
+#include "C:/Users/user/Desktop/MyDLL/MyFirstDLL/029_MyFirstDLL.h"
+//#include "C:\Users\user\Desktop\MyDLL\MyFirstDLL\MyFirst.h"
+
+#pragma comment (lib,"C:/Users/user/Desktop/MyDLL/MyFirstDLL/029_MyFirstDLL.lib")
 
 int main()
 {
-	setlocale(LC_ALL, "Korean");
-	WCHAR fileName[] = L"data.txt";
-	WCHAR fileData[] = L"Just test String~";
-	
-	HANDLE hFile = CreateFile(
-		fileName, GENERIC_WRITE, FILE_SHARE_WRITE,
-		0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
-	);
+	int arr[10] = { 10,9,8,7,6,5,4,3,2,1 };
+	MyQuickSort(arr, 10);
 
-	if (hFile == INVALID_HANDLE_VALUE)
+	for (int n : arr)
 	{
-		wprintf(L"FILE CREATION FAULT");
-		return -1;
+		printf("%d ", n);
 	}
-	
-	DWORD numOfByteWritten = 0;
-	WriteFile(
-		hFile, fileData, sizeof(fileData), &numOfByteWritten, NULL);
-	
-	wprintf(L"Written data size : %u\n", numOfByteWritten);
-	CloseHandle(hFile);
 
-	return 0;
+	getchar();
+
 }
