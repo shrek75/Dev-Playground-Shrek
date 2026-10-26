@@ -30,6 +30,9 @@
   <Project Path="026_namedpipe_asynch_client/026_namedpipe_asynch_client.vcxproj" Id="6c44cdaf-5755-492a-8876-be357e981918" />
   <Project Path="027_MyFirstStaticLib/027_MyFirstStaticLib.vcxproj" Id="1905e982-c257-4051-9453-26945290eb32" />
   <Project Path="029_MyFirstDLL/029_MyFirstDLL.vcxproj" Id="6a14b87d-d907-4c11-92ca-f8500880c5f9" />
+  <Project Path="030_Array_Paint_Recursion/030_Array_Paint_Recursion.vcxproj" Id="8e3f084e-4f3b-491d-8bd0-00e23fec8ce3" />
+  <Project Path="031_Array_Paint_Iteration/031_Array_Paint_Iteration.vcxproj" Id="b98afed1-cd23-4c99-bad7-bf40eb289c54" />
+  <Project Path="032_Array_Paint_Iter_STL/032_Array_Paint_Iter_STL.vcxproj" Id="cfac1d47-f482-418e-ab09-b2944927bd98" />
   <Project Path="CStyleAddressBook/CStyleAddressBook.vcxproj" Id="3bd14598-b089-4676-904a-3aa224163846" />
   <Project Path="_Deque/011_Deque.csproj" Id="8fe8a0ea-e3cc-42f0-b249-b7c926015bbf" />
 </Solution>

@@ -6,15 +6,15 @@
 
 void Test( int a)
 {
-	
+	a += 1;
+	int b = 0;
+	int* p = &b;
+	p += 3;
 }
 
 int main()
 {
-	WCHAR str[] = L"안녕하세요";
-	std::cout << _countof(str) << std::endl;
-	std::cout << sizeof(str) << std::endl;
-	std::cout << wcslen(str) << std::endl;
-
+	
+	Test(3);
 	
 }
