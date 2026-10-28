@@ -104,16 +104,20 @@ UINT WINAPI ThreadProc(LPVOID param)
 	return 1;
 }
 
+//#pragma pack(push,1)
+struct MyStruct
+{
+	char a : 4;
+	char b : 4;
+};
+//#pragma pack(pop)
+
+
 int main()
 {
-	_beginthreadex(NULL, 0, ThreadProc, NULL, 0, NULL);
-	//int arr[15] = { 15,12,11,13,14,7,2,1,10,3,6,5,8,9,4 };
-	//MyQuickSort(arr, 15);
-	//Sleep(10000);
-	
-	
-
-	static int a = Test();
-	a++;
+	MyStruct m;
+	m.a = 0x0F;
+	m.b = 0x0E;
+	printf("%d\n", sizeof(m));
 	
 }
