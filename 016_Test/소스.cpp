@@ -112,12 +112,28 @@ struct MyStruct
 };
 //#pragma pack(pop)
 
+class TestC
+{
+public:
+	char a;
+	int b;
+	int c;
+	short d;
+	char e;
+	int f;
+	int g;
+	short h;
+};
+
+void TestFu(TestC c)
+{
+	c.a = 'r';
+}
 
 int main()
 {
-	MyStruct m;
-	m.a = 0x0F;
-	m.b = 0x0E;
-	printf("%d\n", sizeof(m));
+	TestC c;
+	c.b = 1;
+	TestFu(c);
 	
 }

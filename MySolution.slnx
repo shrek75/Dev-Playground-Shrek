@@ -34,6 +34,7 @@
   <Project Path="031_Array_Paint_Iteration/031_Array_Paint_Iteration.vcxproj" Id="b98afed1-cd23-4c99-bad7-bf40eb289c54" />
   <Project Path="032_Array_Paint_Iter_STL/032_Array_Paint_Iter_STL.vcxproj" Id="cfac1d47-f482-418e-ab09-b2944927bd98" />
   <Project Path="033_PathFinding/033_PathFinding.vcxproj" Id="e464722a-e21b-4e49-9ca4-9260a8459040" />
+  <Project Path="034_PathFinding_WinApp/034_PathFinding_WinApp.vcxproj" Id="09aa72a9-bacd-4d4e-aead-f3c535cca2aa" />
   <Project Path="CStyleAddressBook/CStyleAddressBook.vcxproj" Id="3bd14598-b089-4676-904a-3aa224163846" />
   <Project Path="_Deque/011_Deque.csproj" Id="8fe8a0ea-e3cc-42f0-b249-b7c926015bbf" />
 </Solution>
