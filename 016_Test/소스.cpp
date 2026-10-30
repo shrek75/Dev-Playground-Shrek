@@ -132,8 +132,10 @@ void TestFu(TestC c)
 
 int main()
 {
-	TestC c;
-	c.b = 1;
-	TestFu(c);
+	int a = 0;
+	while (1)
+	{
+		a++;
+		}
 	
 }
