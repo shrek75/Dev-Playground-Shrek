@@ -132,10 +132,10 @@ void TestFu(TestC c)
 
 int main()
 {
-	int a = 0;
-	while (1)
-	{
-		a++;
-		}
+	unsigned int a = 0;
+	
+	
+	
+
 	
 }
