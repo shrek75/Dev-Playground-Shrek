@@ -14,29 +14,13 @@ public:
 	/// <param name="name">이름</param>
 	void CacheHit(LPVOID paramAddr, DWORD size, LPCWSTR name);
 
-	static CacheHitTest& GetInstance()
-	{
-		static CacheHitTest instance;
-		return instance;
-	}
 
-	//인텔리센스 미쳤고
-	void PrintCacheHitInfo()
-	{
-		for (const auto& pair : _cacheHitInfoMap)
-		{
-			const CacheHitInfo& info = pair.second;
-			std::wcout << L"Name: " << info._name
-				<< L", Address: " << info._addr
-				<< L", Size: " << info._size
-				<< L", Hit Count: " << info._hitCount
-				<< L", Miss Count: " << info._missCount
-				<< std::endl;
-		}
-	}
+	// 캐시히트 정보 출력.
+	void PrintCacheHitInfo();
 
+	//싱글톤 객체 얻기.
+	static CacheHitTest& GetInstance();
 private:
-	
 	static DWORD usageCount;  //캐시라인 접근시마다 1씩 증가함. LRU에 사용
 
 	//태그정보(물리주소20bit, 마지막접근시간)
@@ -49,12 +33,7 @@ private:
 	static int _numWays; //l1캐시의 way수
 	static TagInfo* _tagInfo; //TagInfo [index*way + way] 형식으로 tag정보를 저장한다. 
 	CacheHitTest();
-	~CacheHitTest()
-	{
-		if (_tagInfo != nullptr)
-			free(_tagInfo);
-
-	}
+	~CacheHitTest();
 
 	//캐시히트정보를 저장하는 구조체
 	struct CacheHitInfo
@@ -69,27 +48,8 @@ private:
 	//캐시히트정보를 저장하는 unordered_map
 	std::unordered_map<std::wstring, CacheHitInfo> _cacheHitInfoMap;
 
-	void SaveCacheHitInfo(LPCWSTR name, LPVOID addr, DWORD size, BOOL isCacheHit)
-	{
-		//찾아보고 이미 있는 이름이라면 값을 갱신한다. 없으면 새로 추가한다.
-		std::wstring str(name);
-		auto iter = _cacheHitInfoMap.find(str);
-		if (iter != _cacheHitInfoMap.end())
-		{
-			if (isCacheHit)
-				iter->second._hitCount++;
-			else
-				iter->second._missCount++;
-
-			return;
-		}
-
-		//이함수가 호출될 일은 없겠지.. 처음에 접근할때는 무조건 miss니까.
-		if (isCacheHit)
-			_cacheHitInfoMap[str] = { str, addr, size, 1, 0 };
-		else
-			_cacheHitInfoMap[str] = { str, addr, size, 0, 1 };
-	}
+	//캐시히트여부를 저장하는 함수
+	void SaveCacheHitInfo(LPCWSTR name, LPVOID addr, DWORD size, BOOL isCacheHit);
 };
 
 int CacheHitTest::_numWays = 0;
@@ -127,6 +87,34 @@ CacheHitTest::CacheHitTest()
 	ZeroMemory(_tagInfo, sizeof(TagInfo) * _numWays * 64);
 
 	return;
+}
+
+CacheHitTest::~CacheHitTest()
+{
+	if (_tagInfo != nullptr)
+		free(_tagInfo);
+}
+
+void CacheHitTest::SaveCacheHitInfo(LPCWSTR name, LPVOID addr, DWORD size, BOOL isCacheHit)
+{
+	//찾아보고 이미 있는 이름이라면 값을 갱신한다. 없으면 새로 추가한다.
+	std::wstring str(name);
+	auto iter = _cacheHitInfoMap.find(str);
+	if (iter != _cacheHitInfoMap.end())
+	{
+		if (isCacheHit)
+			iter->second._hitCount++;
+		else
+			iter->second._missCount++;
+
+		return;
+	}
+
+	//이함수가 호출될 일은 없겠지.. 처음에 접근할때는 무조건 miss니까.
+	if (isCacheHit)
+		_cacheHitInfoMap[str] = { str, addr, size, 1, 0 };
+	else
+		_cacheHitInfoMap[str] = { str, addr, size, 0, 1 };
 }
 
 void CacheHitTest::CacheHit(LPVOID paramAddr, DWORD size, LPCWSTR name)
@@ -205,6 +193,28 @@ void CacheHitTest::CacheHit(LPVOID paramAddr, DWORD size, LPCWSTR name)
 
 		//처리해야할 캐시라인을 다음 캐시라인으로 변경한다.
 		addr += 64;
+	}
+}
+
+CacheHitTest& CacheHitTest::GetInstance()
+{
+
+	static CacheHitTest instance;
+	return instance;
+
+}
+
+void CacheHitTest::PrintCacheHitInfo()
+{
+	for (const auto& pair : _cacheHitInfoMap)
+	{
+		const CacheHitInfo& info = pair.second;
+		std::wcout << L"Name: " << info._name
+			<< L", Address: " << info._addr
+			<< L", Size: " << info._size
+			<< L", Hit Count: " << info._hitCount
+			<< L", Miss Count: " << info._missCount
+			<< std::endl;
 	}
 }
 

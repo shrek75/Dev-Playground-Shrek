@@ -1,6 +1,11 @@
 ﻿#include <iostream>
 #include <Windows.h>
 #include <thread>
+#include "../Cache_Hit_Check/CacheHitCheck.h"
+
+#pragma comment(lib, "C:/Users/user/Documents/GitHub/Dev-Playground-Shrek/Release/Cache_Hit_Check.lib")
+
+
 void Render(int* arr, int count, int pivotIndex, int leftIndex, int rightIndex);
 
 void MyQuickSort(int* arr, int count)
@@ -134,7 +139,9 @@ int main()
 {
 	unsigned int a = 0;
 	
+	CacheHitTest::GetInstance().CacheHit(&a, sizeof(unsigned int), L"main_a");
 	
+	CacheHitTest::GetInstance().PrintCacheHitInfo();
 	
 
 	
