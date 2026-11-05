@@ -135,8 +135,27 @@ void TestFu(TestC c)
 	c.a = 'r';
 }
 
+struct __declspec(align(64)) CUSINFO
+{
+	DWORD dwCustomerID;
+	WCHAR szName[100];
+
+	__declspec(align(64))
+	int nBalance;
+	FILETIME ftLastOrderData;
+};
+
 int main()
 {
+	CUSINFO info;
+	ZeroMemory(&info, sizeof(CUSINFO));
+	info.dwCustomerID = 0x11223344;
+	for (int i = 0; i < 100; i++)
+	{
+		info.szName[i] = L'A';
+	}
+	info.nBalance = 0xAAAAAAAA;
+
 	unsigned int a = 0;
 	
 	CacheHitTest::GetInstance().CacheHit(&a, sizeof(unsigned int), L"main_a");

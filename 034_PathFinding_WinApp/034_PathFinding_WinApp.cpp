@@ -3,13 +3,23 @@
 
 #include "framework.h"
 #include "034_PathFinding_WinApp.h"
+#include <windowsx.h>
+#include "PathFinding.h"
 
 #define MAX_LOADSTRING 100
+
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
+
+int g_x;   //현재 마우스의 x좌표
+int g_y;   //현재 마우스의 y좌표
+int g_col; //몇번째 열의 cell인지
+int g_row; //몇번째 행의 cell인지
+
+
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -142,11 +152,104 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+
+    case WM_LBUTTONDOWN:
+    {
+		g_x = GET_X_LPARAM(lParam);
+		g_y = GET_Y_LPARAM(lParam);
+
+        //픽셀 좌표 > 격자 칸 번호로 변환
+        g_col = g_x / CELL_SIZE;
+		g_row = g_y / CELL_SIZE;
+
+        InvalidateRect(hWnd, nullptr, TRUE); //WM_PAINT 요청이래.
+    }
+    break;
+
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
-            BeginPaint(hWnd, &ps);
+            HDC hdc =BeginPaint(hWnd, &ps);
             // TODO: 여기에 그리기 코드를 추가합니다...
+
+            DWORD maxH = PathFinding::GetScreenHeight();
+            DWORD maxW = PathFinding::GetScreenWidth();
+
+            for (DWORD i = 0; i <= maxH; i++)
+            {
+                MoveToEx(hdc, 0, i * CELL_SIZE, nullptr);
+                LineTo(hdc, maxW * CELL_SIZE, i * CELL_SIZE);
+            }
+
+            for (DWORD j = 0; j <= maxW; j++)
+            {
+                MoveToEx(hdc, j * CELL_SIZE, 0, nullptr);
+                LineTo(hdc, j * CELL_SIZE, maxH * CELL_SIZE);
+            }
+
+            TextOut(hdc, 
+                (maxW + 1) * CELL_SIZE,
+                0,
+                L"안녕하세용ㅋ", 6);
+
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                1 * CELL_SIZE,
+                L"왼클릭 : 장애물 그리기", 13);
+
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                2 * CELL_SIZE,
+                L"우클릭 : 장애물 지우기", 13);
+
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                3 * CELL_SIZE,
+                L"1 : 시작지점 설정", 11);
+
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                4 * CELL_SIZE,
+                L"2 : 도착지점 설정", 11);
+
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                5 * CELL_SIZE,
+                L"S : 시작 / 일시정지", 13);
+
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                6 * CELL_SIZE,
+                L"R : 재시작", 7);
+
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                7 * CELL_SIZE,
+                L"L : 맵 불러오기", 10);
+
+            WCHAR str1[32];
+            swprintf_s(str1, L"x : %d y : %d", g_x, g_y);
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                8 * CELL_SIZE,
+                str1, wcslen(str1));
+
+            WCHAR str2[32];
+            swprintf_s(str2, L"열 : %d 행 : %d", g_col, g_row);
+            TextOut(hdc,
+                (maxW + 1) * CELL_SIZE,
+                9 * CELL_SIZE,
+                str2, wcslen(str2));
+
+            // pen, brush사용법
+            //HBRUSH myBrush = CreateSolidBrush(RGB(255, 0, 0));
+            //HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
+            //
+            //Rectangle(hdc, 10, 10, 100, 100);
+            //
+            //SelectObject(hdc, oldBrush);
+            //DeleteObject(myBrush);
+
             EndPaint(hWnd, &ps);
         }
         break;

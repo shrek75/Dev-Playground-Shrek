@@ -27,9 +27,15 @@
     <ClInclude Include="034_PathFinding_WinApp.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="PathFinding.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="034_PathFinding_WinApp.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFinding.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
