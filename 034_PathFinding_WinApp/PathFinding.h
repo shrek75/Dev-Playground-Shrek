@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <Windows.h>
+#include <iostream>
+#include <stack>
 
 #define CELL_SIZE 30 //창에 노드하나를 그릴 정사각형 사이즈. 이 사이즈 기준으로 픽셀을 판단하여 클릭한 노드를 알아낸다.
 
@@ -28,20 +30,37 @@ public:
 	static DWORD GetScreenHeight() { return _screenHeight; }
 	static DWORD GetScreenWidth() { return _screenWidth; }
 	
-	static BOOL SetStartNode();
-	static BOOL SetEndNode();
+	// 시작 노드를 설정한다. row: Y행 / col: X열
+	static BOOL SetStartNode(DWORD row, DWORD col);
+	// 도착 노드를 설정한다. row: Y행 / col: X열
+	static BOOL SetEndNode(DWORD row, DWORD col);
+	// 시작 노드의 행열 정보를 가져온다.
+	static BOOL GetStartNode(DWORD* row, DWORD* col);
+	// 도착 노드의 행열 정보를 가져온다.
+	static BOOL GetEndNode(DWORD* row, DWORD* col);
+	// Y행 X열의 노드정보를 가져온다.
+	static BOOL GetNode(DWORD row, DWORD col, const Node** node);
 
 	//Node들을 할당하고, 초기화를 수행한다. 
-	static void InitMap();
+	static void Init();
+	static void DeInit();
+
+	static DWORD FindPath();
+
 
 	PathFinding();
 	~PathFinding();
 
 private:
+
+	inline static BOOL _isStarted; //길찾기가 진행중인지 나타내는 변수
+
 	inline static DWORD _screenHeight = 20; // y방향 Node 개수.
 	inline static DWORD _screenWidth = 40;  // x방향 Node 개수.
 
 	inline static Node* _map = nullptr; // Node의 2차원배열로 맵을 구현했다.
 	inline static Node* _startNode = nullptr;  //출발점
 	inline static Node* _endNode = nullptr;    //도착점
+
+	inline static std::stack<Node*> _nodeStack; //길찾기 과정에서 탐색할 노드를 담을 스택.
 };
