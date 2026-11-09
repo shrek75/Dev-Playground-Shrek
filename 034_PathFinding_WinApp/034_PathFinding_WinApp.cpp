@@ -173,7 +173,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_LBUTTONDOWN:
     {
-		
+        PathFinding::SetObstacleNode(g_row, g_col, TRUE);
 
         InvalidateRect(hWnd, nullptr, TRUE); //WM_PAINT 요청이래.
     }
@@ -205,12 +205,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc =BeginPaint(hWnd, &ps);
             // TODO: 여기에 그리기 코드를 추가합니다...
 
-            //시작Node, 도착Node 색칠해주기.
+            //Node 색칠해주기.
+
+            for (DWORD y = 0; y < PathFinding::GetScreenHeight(); y++)
+            {
+                for (DWORD x = 0; x < PathFinding::GetScreenWidth(); x++)
+                {
+                    const Node* node;
+                    if (!PathFinding::GetNode(y, x, &node)) continue;
+ 
+                    HBRUSH myBrush;
+                    if (node->_isObstacle)
+                        myBrush = CreateSolidBrush(RGB(50, 50, 50));
+                    else if (node->_isTraveled)
+                        myBrush = CreateSolidBrush(RGB(255, 0, 100));
+                    else if (node->_isReserved)
+                        myBrush = CreateSolidBrush(RGB(255, 100, 0));
+                    else continue;
+                    HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
+
+                    Rectangle(hdc,
+                        CELL_SIZE * x,
+                        CELL_SIZE * y,
+                        CELL_SIZE * (x + 1),
+                        CELL_SIZE * (y + 1)
+                    );
+
+                    SelectObject(hdc, oldBrush);
+                    DeleteObject(myBrush);
+
+                }
+            }
+
+
+
             DWORD startNodeCol;
             DWORD startNodeRow;
             DWORD endNodeCol;
             DWORD endNodeRow;
 
+            //시작 Node 그리기
 			if (PathFinding::GetStartNode(&startNodeRow, &startNodeCol))
 			{
 				HBRUSH myBrush = CreateSolidBrush(RGB(255, 0, 0));
@@ -227,6 +261,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DeleteObject(myBrush);
 
 			}
+
+            //도착 Node 그리기
             if (PathFinding::GetEndNode(&endNodeRow, &endNodeCol))
             {
                 HBRUSH myBrush = CreateSolidBrush(RGB(255, 0, 255));
@@ -243,12 +279,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DeleteObject(myBrush);
             }
 
-            //이런식으로 사용하면될듯
-            //Node* pNode;
-            //PathFinding::GetNode(0, 0, &pNode);
-            //pNode->_isObstacle
 
-            // 단축키 Print
+            // 격자 그리기
             DWORD maxH = PathFinding::GetScreenHeight();
             DWORD maxW = PathFinding::GetScreenWidth();
 
@@ -264,6 +296,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 LineTo(hdc, j * CELL_SIZE, maxH * CELL_SIZE);
             }
 
+
+            // 단축키 출력 해주기
             TextOut(hdc, 
                 (maxW + 1) * CELL_SIZE,
                 0,

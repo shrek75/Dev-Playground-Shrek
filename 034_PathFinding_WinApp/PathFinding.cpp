@@ -105,12 +105,14 @@ DWORD PathFinding::FindPath()
 	if (traveledNode == _endNode)
 	{
 		_isStarted = FALSE;
+		while (!_nodeStack.empty())
+			_nodeStack.pop();
 		return 0;
 	}
 
 	//동서남북으로 탐색후보 넣어주기
-	int dX[4] = { 1,-1,0,0 };
-	int dY[4] = { 0,0,1,-1 };
+	int dX[4] = { 0,-1,0,1 };
+	int dY[4] = { 1,0,-1,0 };
 	for (int i = 0; i < 4; i++)
 	{
 		int newX = traveledNode->_x + dX[i]; //새로 탐색해야할 X좌표
@@ -130,6 +132,8 @@ DWORD PathFinding::FindPath()
 		newNode->_traveledDistance += 1;
 		_nodeStack.push(newNode);
 	}
+
+	return 1;
 }
 
 BOOL PathFinding::GetStartNode(DWORD* row, DWORD* col)
@@ -152,10 +156,22 @@ BOOL PathFinding::GetEndNode(DWORD* row, DWORD* col)
 
 BOOL PathFinding::GetNode(DWORD row, DWORD col, const Node** node)
 {
+	if (_map == nullptr) return FALSE;
+
 	//노드의 범위 검사
 	if (row >= _screenHeight || col >= _screenWidth) return FALSE;
 
 	//사용자 입장에서 Node*를 받아야하니, 인자로 Node**를 받아야 Node*를 넣어줄 수 있다.
 	*node = &_map[row * _screenWidth + col];
+
+	return TRUE;
+}
+
+BOOL PathFinding::SetObstacleNode(DWORD row, DWORD col, BOOL isObstacle)
+{
+	if (_map == nullptr) return FALSE;
+	if (row >= _screenHeight || col >= _screenWidth) return FALSE;
+
+	_map[row * _screenWidth + col]._isObstacle = isObstacle;
 	return TRUE;
 }

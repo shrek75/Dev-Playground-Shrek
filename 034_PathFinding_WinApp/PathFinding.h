@@ -41,6 +41,8 @@ public:
 	// Y행 X열의 노드정보를 가져온다.
 	static BOOL GetNode(DWORD row, DWORD col, const Node** node);
 
+	static BOOL SetObstacleNode(DWORD row, DWORD col,BOOL isObstacle);
+
 	//Node들을 할당하고, 초기화를 수행한다. 
 	static void Init();
 	static void DeInit();
