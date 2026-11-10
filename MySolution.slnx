@@ -41,5 +41,6 @@
   <Project Path="038_Profiler/038_Profiler.vcxproj" Id="b8438c67-15ec-480b-bdfc-68a7db62f83a" />
   <Project Path="Cache_Hit_Check/Cache_Hit_Check.vcxproj" Id="8c4be24c-7481-4c0b-901c-3ab71cfef20d" />
   <Project Path="CStyleAddressBook/CStyleAddressBook.vcxproj" Id="3bd14598-b089-4676-904a-3aa224163846" />
+  <Project Path="Profiler/Profiler.vcxproj" Id="e4f67646-3cd3-43d8-a38a-8477e75ea360" />
   <Project Path="_Deque/011_Deque.csproj" Id="8fe8a0ea-e3cc-42f0-b249-b7c926015bbf" />
 </Solution>

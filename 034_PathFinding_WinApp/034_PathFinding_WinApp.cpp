@@ -8,6 +8,10 @@
 
 #define MAX_LOADSTRING 100
 
+#define PROFILER
+#include "C:/Users/user/Desktop/MyDLL/Profiler/profiler.h"
+#pragma comment(lib,"C:/Users/user/Desktop/MyDLL/Profiler/Profiler.lib")
+
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -161,6 +165,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_MOUSEMOVE:
     {
+        PROFILE(L"WM_MOUSEMOVE");
         g_x = GET_X_LPARAM(lParam);
         g_y = GET_Y_LPARAM(lParam);
 
@@ -192,6 +197,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case L'S':
             PathFinding::FindPath();
             break;
+        case L'P':
+        {
+            Profiler::ProfileDataOutText(L"PathFindingWinAppProfileTest.txt");
+        }
+        break;
+            
         }
 
         //다시 그리기 요청

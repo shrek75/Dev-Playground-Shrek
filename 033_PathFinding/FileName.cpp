@@ -4,6 +4,9 @@
 #include <queue>
 #include <math.h>
 
+#include "C:/Users/user/Desktop/MyDLL/Profiler/profiler.h"
+#pragma comment(lib,"C:/Users/user/Desktop/MyDLL/Profiler/Profiler.lib")
+
 using namespace std;
 
 #define SCREEN_HEIGHT 10
