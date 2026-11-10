@@ -1,21 +1,25 @@
 ﻿#pragma once
 #include <Windows.h>
 
+#define PROFILE_NUMS 50 //프로파일 샘플 개수
+//#define PROFILER 
+//PROFILER 매크로가 정의되어있어야 정상작동한다.
+
 struct PROFILE_SAMPLE
 {
-	int _dataNum;       //샘플의 사용여부
-	WCHAR _name[64];  //샘플의 이름
+	WCHAR _name[64] = { 0 };  //샘플의 이름
 
-	INT64 _min[3];    //최소값
-	INT64 _max[3];    //최대값
-	INT64 _totalTime; //총합산시간(평균내는용도)
-	INT64 _data[10000]; //데이터는 call 10000번까지만 저장. (중간값 얻어보고 싶어서)
+	UINT64 _min[3] = { 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF };    //최소값
+	UINT64 _max[3] = { 0,0,0 };    //최대값
+	UINT64 _totalTime = 0; //총합산시간(평균내는용도)
+	UINT64 _data[10000] = { 0 }; //데이터는 call 10000번까지만 저장. (중간값 얻어보고 싶어서)
 	// 8byte * 10000개 * 30sample => 2.4MB
 	//삽입은 빠르게. 중간값 계산은 저장할때 1번만하면 되니까 배열쓰면될듯.
 
-	INT64 _callTimes; //call 횟수
+	UINT64 _callTimes = 0; //call 횟수, 0이면 해당샘플을 사용하지 않는것으로 본다.
 };
 
+//생성자에 프로파일샘플 이름을 전달해서 사용한다.
 class Profiler
 {
 public:
@@ -24,10 +28,11 @@ public:
 	~Profiler();
 	static void Reset();
 	static void ProfileDataOutText(const WCHAR* fileName);
-	static LARGE_INTEGER GetQPF();
 private:
+	static LARGE_INTEGER GetQPF();
+
 	//인스턴스가 사라져도 프로파일 데이터는 남아있어야 하니 static으로 구현.
-	static PROFILE_SAMPLE _profiles[50];
+	inline static PROFILE_SAMPLE _profiles[PROFILE_NUMS];
 
 	WCHAR _name[64];          //프로파일 샘플 이름
 	LARGE_INTEGER _startTime; //프로파일 샘플의 시작시간.
