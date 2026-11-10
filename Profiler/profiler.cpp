@@ -94,9 +94,10 @@ void Profiler::ProfileDataOutText(const WCHAR* fileName)
 	}
 
 	//맨윗줄 출력
-	WCHAR buf[100];
-	swprintf_s(buf, L"\t\t\t MIN\t\t MAX\t\t AVG\t\t Median\t\t Call\n");
-	WriteFile(hFile, buf, ((DWORD)wcslen(buf) + 1) * sizeof(WCHAR), nullptr, nullptr);
+	WCHAR buf[128] = L"# 모든 시간은 마이크로초 단위이다.\n# AVG는 MIN과 MAX를 제외한 평균이다.\n# TOTAL은 모든데이터의 합산이다.\n# Median은 정렬된 0-9999번째 데이터중 중간값이다.\n\n";
+	WriteFile(hFile, buf, (DWORD)wcslen(buf) * sizeof(WCHAR), nullptr, nullptr);
+	swprintf_s(buf, L"%-18s %10s %10s %10s %10s %10s %8s\n", L" ", L"MIN", L"MAX", L"MEDIAN", L"AVG", L"TOTAL", L"Call");
+	WriteFile(hFile, buf, (DWORD)wcslen(buf) * sizeof(WCHAR), nullptr, nullptr);
 
 	//데이터 출력
 	for (int i = 0; i < PROFILE_NUMS; i++)
@@ -112,22 +113,23 @@ void Profiler::ProfileDataOutText(const WCHAR* fileName)
 		std::qsort(_profiles[i]._data, medianDataCount, sizeof(UINT64),
 			[](const void* a, const void* b) -> int
 			{
-				return *((UINT64*)a) > *((UINT64*)b);
+				return (*((UINT64*)a) > *((UINT64*)b)) - (*((UINT64*)a) < *((UINT64*)b));
 			});
 		UINT64 median = _profiles[i]._data[medianDataCount / 2];
 
 		//데이터를 순서와 형식에 맞게 buf에 담는다.
-		swprintf_s(buf, L"[%16s]\t %0.1lf\t %0.1lf\t %0.1lf\t %0.1lf\t\t %lld\n",
+		swprintf_s(buf, L"[%-16.16s] %10.1f %10.1f %10.1f %10.1f %10.1f %8llu\n",
 			_profiles[i]._name,
 			_profiles[i]._min[0] / TransMicroSecond,
 			_profiles[i]._max[0] / TransMicroSecond,
-			_profiles[i]._totalTime / TransMicroSecond / _profiles[i]._callTimes,
 			median / TransMicroSecond,
+			(_profiles[i]._totalTime - _profiles[i]._min[0] - _profiles[i]._max[0]) / TransMicroSecond / _profiles[i]._callTimes,
+			_profiles[i]._totalTime / TransMicroSecond,
 			_profiles[i]._callTimes
 		);
 
 		//출력
-		WriteFile(hFile, buf, ((DWORD)wcslen(buf) + 1) * sizeof(WCHAR), nullptr, nullptr);
+		WriteFile(hFile, buf, (DWORD)wcslen(buf) * sizeof(WCHAR), nullptr, nullptr);
 	}
 
 	CloseHandle(hFile);
