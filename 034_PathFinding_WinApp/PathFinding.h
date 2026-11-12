@@ -31,6 +31,7 @@ public:
 	static DWORD GetScreenWidth() { return _screenWidth; }
 	
 	// 시작 노드를 설정한다. row: Y행 / col: X열
+	// 이 함수에서 첫 탐색노드를 스택에 넣어준다.
 	static BOOL SetStartNode(DWORD row, DWORD col);
 	// 도착 노드를 설정한다. row: Y행 / col: X열
 	static BOOL SetEndNode(DWORD row, DWORD col);
@@ -47,6 +48,7 @@ public:
 	static void Init();
 	static void DeInit();
 
+	//길찾기가 성공했다면 1을 반환한다.
 	static DWORD FindPath();
 
 

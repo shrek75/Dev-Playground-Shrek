@@ -90,12 +90,18 @@ DWORD PathFinding::FindPath()
 		//출발,도착점 설정 확인
 		if (_startNode == nullptr || _endNode == nullptr) return 0;
 
-		//이미 도착했거나, 못찾았는지 확인
+		//이미 도착했는지 확인
 		if (_nodeStack.empty()) return 0;
 
 		_isStarted = TRUE;
 	}
 	
+	//길 못찾았는지 확인
+	if (_nodeStack.empty())
+	{
+		_isStarted = FALSE;
+		return 0;
+	}
 	//탐색해야할 노드 설정
 	Node* traveledNode = _nodeStack.top();
 	_nodeStack.pop();
@@ -107,7 +113,7 @@ DWORD PathFinding::FindPath()
 		_isStarted = FALSE;
 		while (!_nodeStack.empty())
 			_nodeStack.pop();
-		return 0;
+		return 1;
 	}
 
 	//동서남북으로 탐색후보 넣어주기
@@ -133,7 +139,7 @@ DWORD PathFinding::FindPath()
 		_nodeStack.push(newNode);
 	}
 
-	return 1;
+	return 0;
 }
 
 BOOL PathFinding::GetStartNode(DWORD* row, DWORD* col)

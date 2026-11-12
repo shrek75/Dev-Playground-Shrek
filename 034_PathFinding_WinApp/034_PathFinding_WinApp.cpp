@@ -22,7 +22,9 @@ int g_x;   //현재 마우스의 x좌표
 int g_y;   //현재 마우스의 y좌표
 int g_col; //몇번째 열의 cell인지
 int g_row; //몇번째 행의 cell인지
-
+BOOL isMouseLButtonDown; //마우스 왼쪽버튼 누르고있는지
+BOOL isMouseRButtonDown; //마우스 오른쪽버튼 누르고있는지
+BOOL isPaintPath; //길찾기완료했을때 길을 그릴지말지
 
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
@@ -173,14 +175,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         g_col = g_x / CELL_SIZE;
         g_row = g_y / CELL_SIZE;
 
-       // InvalidateRect(hWnd, nullptr, TRUE);
+        //장애물 노드 설정해주기
+        if (isMouseLButtonDown)
+        {
+            PathFinding::SetObstacleNode(g_row, g_col, TRUE);
+            InvalidateRect(hWnd, nullptr, TRUE);
+        }
+        else if (isMouseRButtonDown)
+        {
+            PathFinding::SetObstacleNode(g_row, g_col, FALSE);
+            InvalidateRect(hWnd, nullptr, TRUE);
+        }
+
     }
     break;
     case WM_LBUTTONDOWN:
     {
+        isMouseLButtonDown = TRUE;
         PathFinding::SetObstacleNode(g_row, g_col, TRUE);
-
-        InvalidateRect(hWnd, nullptr, TRUE); //WM_PAINT 요청이래.
+        InvalidateRect(hWnd, nullptr, TRUE);
+    }
+    break;
+    case WM_LBUTTONUP:
+    {
+        isMouseLButtonDown = FALSE;
+    }
+    break;
+    case WM_RBUTTONDOWN:
+    {
+        isMouseRButtonDown = TRUE;
+        PathFinding::SetObstacleNode(g_row, g_col, FALSE);
+        InvalidateRect(hWnd, nullptr, TRUE);
+    }
+    break;
+    case WM_RBUTTONUP:
+    {
+        isMouseRButtonDown = FALSE;
     }
     break;
 
@@ -195,7 +225,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PathFinding::SetEndNode(g_row, g_col);
             break;
         case L'S':
-            PathFinding::FindPath();
+            //임시
+            if (isPaintPath) break;
+            isPaintPath = PathFinding::FindPath();
             break;
         case L'P':
         {
@@ -230,9 +262,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     if (node->_isObstacle)
                         myBrush = CreateSolidBrush(RGB(50, 50, 50));
                     else if (node->_isTraveled)
-                        myBrush = CreateSolidBrush(RGB(255, 0, 100));
+                        myBrush = CreateSolidBrush(RGB(100, 50, 100));
                     else if (node->_isReserved)
-                        myBrush = CreateSolidBrush(RGB(255, 100, 0));
+                        myBrush = CreateSolidBrush(RGB(200, 150, 200));
                     else continue;
                     HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
 
@@ -269,6 +301,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     CELL_SIZE * (startNodeRow + 1)
                 );
 
+                TextOut(hdc,
+                    CELL_SIZE* startNodeCol + CELL_SIZE / 3,
+                    CELL_SIZE* startNodeRow + CELL_SIZE / 5,
+                    L"S", 1);
+
 				SelectObject(hdc, oldBrush);
 				DeleteObject(myBrush);
 
@@ -277,7 +314,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             //도착 Node 그리기
             if (PathFinding::GetEndNode(&endNodeRow, &endNodeCol))
             {
-                HBRUSH myBrush = CreateSolidBrush(RGB(255, 0, 255));
+                HBRUSH myBrush = CreateSolidBrush(RGB(50, 175, 150));
                 HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
 
                 Rectangle(hdc,
@@ -286,6 +323,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     CELL_SIZE * (endNodeCol + 1),
                     CELL_SIZE * (endNodeRow + 1)
                 );
+
+                TextOut(hdc,
+                    CELL_SIZE* endNodeCol + CELL_SIZE / 3,
+                    CELL_SIZE* endNodeRow + CELL_SIZE / 5,
+                    L"E", 1);
 
                 SelectObject(hdc, oldBrush);
                 DeleteObject(myBrush);
@@ -308,6 +350,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 LineTo(hdc, j * CELL_SIZE, maxH * CELL_SIZE);
             }
 
+            //길찾기가 완료됐다면 경로 그리기
+            if (isPaintPath)
+            {
+                DWORD nodeRow;
+                DWORD nodeCol;
+                const Node* pNode;
+                PathFinding::GetEndNode(&nodeRow, &nodeCol);
+
+                //도착점에서부터 시작점까지 거꾸로 부모찾으면서 그려주기
+                if (PathFinding::GetNode(nodeRow, nodeCol, &pNode))
+                {
+                    HPEN myPen = CreatePen(PS_SOLID,5,RGB(255, 255, 255));
+                    HPEN oldPen = (HPEN)SelectObject(hdc, myPen);
+                    while (pNode->_parent != nullptr)
+                    {
+                        MoveToEx(hdc, pNode->_x * CELL_SIZE + CELL_SIZE / 2, pNode->_y * CELL_SIZE + CELL_SIZE / 2, nullptr);
+                        LineTo(hdc, pNode->_parent->_x * CELL_SIZE + CELL_SIZE / 2, pNode->_parent->_y * CELL_SIZE + CELL_SIZE / 2);
+                        pNode = pNode->_parent;
+                    }
+                    SelectObject(hdc, oldPen);
+                    DeleteObject(myPen);
+                }
+            }
 
             // 단축키 출력 해주기
             TextOut(hdc, 
