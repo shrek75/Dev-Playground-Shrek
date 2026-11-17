@@ -1,16 +1,21 @@
 ﻿#pragma once
 #include <Windows.h>
 #include "Console.h"
+#include <iostream>
 #pragma comment(lib, "winmm.lib")
 
-#define GAME_FPS 50 
-#define GAME_FPS_100NS (GAME_FPS * 1000 * 10) 
+#define GAME_FPS 50 //게임의 초당 Update 횟수
+#define GAME_FPS_100NS (GAME_FPS * 1000 * 10) //"GAME_FPS"를 100ns단위로 변환한 값 
+
+#define STAGE_LIST_FILE "stage/_stage_list.txt" //스테이지 정보 파일
+#define ENEMY_LIST_FILE "enemy/_enemy_list.txt" //enemy 정보 파일
 
 enum SCENE
 {
 	TITLE,
 	GAME,
-	EXIT
+	EXIT,
+	LOAD
 };
 
 inline SCENE scene = TITLE;   //현재 scene
@@ -25,3 +30,4 @@ inline int renderCalls = 0;
 void GoTitle();
 void GoGame();
 void GoExit();
+void GoLoad();

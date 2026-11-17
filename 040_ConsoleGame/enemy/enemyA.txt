@@ -1,0 +1,5 @@
+symbol : A
+pattern : patternA.txt
+hp : 10
+score : 7
+power : 1

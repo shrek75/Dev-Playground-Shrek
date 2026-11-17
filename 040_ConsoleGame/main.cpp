@@ -16,10 +16,13 @@ int main()
 			GoTitle();
 			break;
 		case GAME:
-		//	GoGame();
+			GoGame();
+			break;
+		case LOAD:
+			GoLoad();
 			break;
 		case EXIT:
-		//	GoExit();
+			//GoExit();
 			break;
 		}
 	}

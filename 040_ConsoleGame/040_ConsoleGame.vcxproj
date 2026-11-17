@@ -143,11 +143,14 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene_Game.cpp" />
+    <ClCompile Include="Scene_Load.cpp" />
     <ClCompile Include="Scene_Title.cpp" />
+    <ClCompile Include="textParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="textParser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
