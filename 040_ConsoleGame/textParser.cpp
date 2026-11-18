@@ -11,16 +11,17 @@ TextParser::TextParser(const char* fileName)
 
 	//파일 사이즈 얻어서 그만큼 메모리 할당
 	fseek(_fp, 0, SEEK_END);
-	_fileSize = ftell(_fp);
-	_buffer = (char *)malloc(_fileSize);
+	_mallocSize = ftell(_fp);
+	fseek(_fp, 0, SEEK_SET);
+	_buffer = (char *)malloc(_mallocSize);
 	if (_buffer == nullptr)
 	{
-		_fileSize = 0;
+		_mallocSize = 0;
 		return;
 	}
 
-	fread_s(_buffer, _fileSize, sizeof(char), _fileSize, _fp);
-
+	_fileSize = fread_s(_buffer, _mallocSize, sizeof(char), _mallocSize, _fp);
+	fclose(_fp);
 }
 
 //한 문장을 가져오는 함수.
@@ -34,17 +35,18 @@ int TextParser::GetNextString(char* buf, int bufSize)
 	int dstIndex = 0;
 
 	//현재 내부버퍼의 _index가  파일크기를 넘지않을 때까지만 작동한다.
-	while (_index < _fileSize)
+	while (_index + 1 < _fileSize)
 	{
 		//내부버퍼의 index값을 1증가한다.
 		_index++;
 		
 		//문장의 끝을 찾았으면 break
+		//이거 EOF를 체크해야하나
 		if (_buffer[_index] == '\n' || _buffer[_index] == EOF)
 			break;
 		
-		//복사될 버퍼의 크기를 초과해도 break
-		if (dstIndex >= bufSize)
+		//복사될 버퍼의 크기를 초과해도 break (NULL문자 넣어줘야함)
+		if (dstIndex >= bufSize - 1)
 			break;
 
 		//복사.
@@ -54,12 +56,24 @@ int TextParser::GetNextString(char* buf, int bufSize)
 
 	//복사한 문자열의 끝에는 NULL문자를 넣어준다.
 	if (dstIndex > 0)
-		buf[dstIndex - 1] = '\0';
+		buf[dstIndex] = '\0';
 
-	return dstIndex - 1;
+	return dstIndex;
 }
 
 void TextParser::Init()
 {
 	_index = 0;
+}
+
+
+TextParser::~TextParser()
+{
+	if (_buffer != nullptr)
+		free(_buffer);
+}
+
+int TextParser::GetFileSize()
+{
+	return _fileSize;
 }

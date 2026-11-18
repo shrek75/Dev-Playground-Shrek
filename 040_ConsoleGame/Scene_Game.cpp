@@ -1,4 +1,5 @@
 ﻿#include "main.h"
+#include "textParser.h"
 
 //Scene전환이 필요할시 Render을 안하기 위해 BOOL값을 return한다. FALSE: SCENE전환 예약.
 BOOL UpdateGame();
@@ -37,7 +38,55 @@ void GoGame()
 
 BOOL UpdateGame()
 {
-	//스페이스바 누를 시 GAME SCENE으로 전환.
+
+#pragma region 현재스테이지 로딩
+	//현재 스테이지 로딩하기
+	if (!isStageLoaded)
+	{
+		//Stage를 모두 클리어했을 때
+		if (nowStage >= totalStage)
+		{
+			scene = EXIT;
+			return FALSE;
+		}
+
+		//해당스테이지 파일 열기
+		TextParser s(pStageFileName[nowStage]);
+		if (s.GetFileSize() == 0) return FALSE;
+		
+		for (int y = 1; y < dfSCREEN_HEIGHT; y++)
+		{
+			char buf[dfSCREEN_WIDTH - 1];
+			s.GetNextString(buf, sizeof(buf));
+			for (int x = 0; x < dfSCREEN_WIDTH - 1; x++)
+			{
+				//파일의 심볼 하나를 읽어온다.
+				char symbol = buf[x];
+
+				//해당 심볼에 해당하는 몬스터 정보가 있는지 찾아본다.
+				if (symbol == ' ' || symbol == '.') continue;
+				for (int i = 0; i < totalEnemyInfo; i++)
+				{
+					//찾았다면 Enemy를 생성한다.
+					if (enemyInfo[i]._symbol == symbol)
+					{
+						enemyList[aliveEnemyNums]._isUsed = TRUE;
+						enemyList[aliveEnemyNums]._x = x;
+						enemyList[aliveEnemyNums]._y = y;
+						enemyList[aliveEnemyNums]._pattern = enemyInfo[i]._pattern;
+						enemyList[aliveEnemyNums]._power = enemyInfo[i]._power;
+						enemyList[aliveEnemyNums]._score = enemyInfo[i]._score;
+						enemyList[aliveEnemyNums]._symbol = enemyInfo[i]._symbol;
+						enemyList[aliveEnemyNums]._hp = enemyInfo[i]._hp;
+						aliveEnemyNums++;
+					}
+				}
+			}
+		}
+		isStageLoaded = TRUE;
+	}
+#pragma endregion
+
 	if (GetAsyncKeyState(VK_SPACE))
 	{
 		scene = EXIT;
@@ -52,27 +101,8 @@ void RenderGame()
 {	
 	Buffer_Clear();
 
-	const char titleMsg[] = "Console Game, Made by, Kim Tae Uk.";
-	static int msgIndex = 0;
-
-	//일정 시간마다 타이틀을 출력하기 위해 매 Render마다 timeGetTime()으로 시간을 얻어온다.
 	DWORD tick = timeGetTime();
-
-	static DWORD msgLastTick = tick; //타이틀msg 를 처리한 마지막 tick수.
 	static DWORD fpsLastTick = tick; //상단fps표기 를 처리한 마지막 tick수.
-
-	//타이틀 메세지 출력 처리(ms단위)
-	if (tick > msgLastTick + 200)
-	{
-		msgLastTick += 200;
-		if (msgIndex != strlen(titleMsg) - 1)
-			msgIndex++;
-	}
-
-	for (int i = 0; i <= msgIndex; i++)
-	{
-		Sprite_Draw(i, 2, titleMsg[i]);
-	}
 
 	//상단 fps출력 처리 (1000ms == 1초)
 	// 사실 한 순간을 들여다봤을 때, 정확히 1초로 떨어지지는 않는다.
@@ -92,6 +122,18 @@ void RenderGame()
 		Sprite_Draw(i, 0, fpsMsg[i]);
 	}
 
+	//ENEMY 그려주기
+	if (aliveEnemyNums > 0)
+	{
+		for (int i = 0; i < MAX_ENEMY_NUMS; i++)
+		{
+			if (!enemyList[i]._isUsed) continue;
+			Sprite_Draw(enemyList[i]._x, enemyList[i]._y, enemyList[i]._symbol);
+		}
+	}
+
 
 	Buffer_Flip();
+
+
 }

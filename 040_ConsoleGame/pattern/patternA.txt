@@ -1,2 +1,2 @@
-R    R    R    R    R    L    L    L    L    L    
-L    L    L    L    L    R    R    R    R    R        
+MOVE: >>>>><<<<<<<<<<>>>>>
+ATTK: ...A....A.....A...A.

@@ -9,6 +9,9 @@
 
 #define STAGE_LIST_FILE "stage/_stage_list.txt" //스테이지 정보 파일
 #define ENEMY_LIST_FILE "enemy/_enemy_list.txt" //enemy 정보 파일
+#define PATTERN_LIST_FILE "pattern/_pattern_list.txt" //enemy pattern 정보 파일
+
+#define MAX_ENEMY_NUMS 200
 
 enum SCENE
 {
@@ -26,8 +29,43 @@ inline LONGLONG lastTick = 0; //과거에 update시 사용한 qpcTick 값.
 inline int updateCalls = 0;
 inline int renderCalls = 0;
 
+inline char (*pStageFileName)[MAX_PATH + 1] = nullptr; //각 스테이지들의 파일명을 가리키는 포인터.
+inline int totalStage = 0; //총 스테이지 개수
 
 void GoTitle();
 void GoGame();
 void GoExit();
 void GoLoad();
+
+
+struct ENEMY_PATTERN
+{
+	char _patternName[MAX_PATH + 1]; //패턴이름 (패턴파일명으로 하였음.) 
+	char _movePattern[64];
+	char _attkPattern[64];
+	int _movePatternSize; // move 패턴의 사이즈 (0 ~ size-1) 까지 계속해서 반복한다.
+	int _attkPatternSize; // attack 패턴의 사이즈 (0 ~ size-1) 까지 계속해서 반복한다.
+};
+inline ENEMY_PATTERN* patternInfo = nullptr; //Pattern 정보 배열
+inline int totalPattern = 0; //Pattern이 총 몇종류인지
+
+struct ENEMY
+{
+	BOOL _isUsed; //배열로 쓸거라 사용중인지 변수 
+	char _symbol;
+	ENEMY_PATTERN* _pattern;
+	int _hp;
+	int _score;
+	int _power;
+	int _x;
+	int _y;
+};
+
+inline int totalEnemyInfo = 0; //Enemy가 총 몇종류인지.
+inline ENEMY* enemyInfo = nullptr; //ENEMY 정보를 담은 배열
+
+
+inline int nowStage = 0; //현재스테이지
+inline BOOL isStageLoaded = FALSE; //현재스테이지가 로딩되었는지
+inline ENEMY enemyList[MAX_ENEMY_NUMS] = { 0 }; //Enemy List
+inline int aliveEnemyNums = 0;
