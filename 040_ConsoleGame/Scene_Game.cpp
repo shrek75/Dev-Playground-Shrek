@@ -36,6 +36,38 @@ void GoGame()
 	}
 }
 
+//게임 초기화
+void Init()
+{
+	//인스턴스 저장용 배열들 초기화
+	for (int i = 0; i < MAX_PLAYER_BULLETS; i++)
+	{
+		playerBulletList[i]._isUsed = FALSE;
+	}
+	for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
+	{
+		enemyBulletList[i]._isUsed = FALSE;
+	}
+	for (int i = 0; i < MAX_ENEMY_NUMS; i++)
+	{
+		enemyList[i]._isUsed = FALSE;
+	}
+	aliveEnemyNums = 0;
+
+	//플레이어 초기화
+	player._hp = 10;
+	player._attackCoolDown = 5;
+	player._moveCoolDown = 1;
+	player._nowAttackCoolDown = 0;
+	player._nowMoveCoolDown = 0;
+	player._score = 0;
+	player._symbol = '@';
+	player._power = 1;
+	player._x = dfSCREEN_WIDTH / 2;
+	player._y = dfSCREEN_HEIGHT - 1;
+}
+
+
 BOOL UpdateGame()
 {
 
@@ -50,7 +82,11 @@ BOOL UpdateGame()
 			return FALSE;
 		}
 
-		//해당스테이지 파일 열기
+		//첫 스테이지라면 초기화작업 (게임중간에 죽었을수도있고..)
+		if (nowStage == 0)
+			Init();	
+
+		//해당스테이지 파일 열고, ENEMY 생성.
 		char stageFile[MAX_PATH + 1];
 		sprintf_s(stageFile, "%s%s", STAGE_DIR, pStageFileName[nowStage]);
 		TextParser s(stageFile);
@@ -58,7 +94,7 @@ BOOL UpdateGame()
 		
 		for (int y = 1; y < dfSCREEN_HEIGHT; y++)
 		{
-			char buf[dfSCREEN_WIDTH - 1];
+			char buf[dfSCREEN_WIDTH];
 			s.GetNextString(buf, sizeof(buf));
 			for (int x = 0; x < dfSCREEN_WIDTH - 1; x++)
 			{
@@ -84,36 +120,114 @@ BOOL UpdateGame()
 						enemyList[aliveEnemyNums]._attkPatternIndex = 0;
 
 						aliveEnemyNums++;
+						break;
 					}
 				}
 			}
 		}
+		
+
 		isStageLoaded = TRUE;
 	}
 #pragma endregion
 
-	//ENEMY LIST 순회
+	//Player Bullet 이동처리
+	for (int i = 0; i < MAX_PLAYER_BULLETS; i++)
+	{
+		Bullet& bullet = playerBulletList[i];
+		if (!bullet._isUsed) continue;
+
+		//이동쿨타임처리
+		if (bullet._nowMoveCoolDown != 0)
+			bullet._nowMoveCoolDown--;
+		if (bullet._nowMoveCoolDown == 0)
+		{
+			//이동
+			bullet._x += bullet._moveX;
+			bullet._y += bullet._moveY;
+			//화면밖나갔으면 소멸
+			if (bullet._x < 0 || bullet._x >= dfSCREEN_WIDTH - 1
+				|| bullet._y < 1 || bullet._y >= dfSCREEN_HEIGHT)
+			{
+				bullet._isUsed = FALSE;
+			}
+			//쿨타임 지정
+			bullet._nowMoveCoolDown = bullet._moveCoolDown;
+		}
+	}
+
+	//Enemy Bullet 이동처리
+	for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
+	{
+		Bullet& bullet = enemyBulletList[i];
+		if (!bullet._isUsed) continue;
+
+		//이동쿨타임처리
+		if (bullet._nowMoveCoolDown != 0)
+			bullet._nowMoveCoolDown--;
+		if (bullet._nowMoveCoolDown == 0)
+		{
+			//이동
+			bullet._x += bullet._moveX;
+			bullet._y += bullet._moveY;
+			//화면밖나갔으면 소멸
+			if (bullet._x < 0 || bullet._x >= dfSCREEN_WIDTH - 1
+				|| bullet._y < 1 || bullet._y >= dfSCREEN_HEIGHT)
+			{
+				bullet._isUsed = FALSE;
+			}
+			//쿨타임 지정
+			bullet._nowMoveCoolDown = bullet._moveCoolDown;
+		}
+	}
+
+
+	//ENEMY MOVE + ATTACK 처리
 	for (int i = 0; i < MAX_ENEMY_NUMS; i++)
 	{
-		if (!enemyList[i]._isUsed) continue;
+		ENEMY& enemy = enemyList[i];
+		if (!enemy._isUsed) continue;
 
-		//이동처리
-		char nextMove = enemyList[i]._pattern->_movePattern[enemyList[i]._movePatternIndex];
+		//MOVE
+		char nextMove = enemy._pattern->_movePattern[enemy._movePatternIndex];
 		switch (nextMove)
 		{
 		case '>':
-			if (enemyList[i]._x + 1 < dfSCREEN_WIDTH - 1)
-				enemyList[i]._x++;
+			if (enemy._x + 1 < dfSCREEN_WIDTH - 1)
+				enemy._x++;
 			break;
 		case '<':
-			if (enemyList[i]._x - 1 >= 0)
-				enemyList[i]._x--;
+			if (enemy._x - 1 >= 0)
+				enemy._x--;
 			break;
 		}
-		enemyList[i]._movePatternIndex = (enemyList[i]._movePatternIndex + 1) % enemyList[i]._pattern->_movePatternSize;
+		enemy._movePatternIndex = (enemy._movePatternIndex + 1) % enemy._pattern->_movePatternSize;
 
-
-
+		//ATTACK
+		char nextAttk = enemy._pattern->_attkPattern[enemy._attkPatternIndex];
+		switch (nextAttk)
+		{
+		//총알생성
+		case 'A':
+			for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
+			{
+				if (enemyBulletList[i]._isUsed == FALSE)
+				{
+					enemyBulletList[i]._isUsed = TRUE;
+					enemyBulletList[i]._moveX = 0;
+					enemyBulletList[i]._moveY = 1;
+					enemyBulletList[i]._x = enemy._x;
+					enemyBulletList[i]._y = enemy._y;
+					enemyBulletList[i]._nowMoveCoolDown = 0;
+					enemyBulletList[i]._moveCoolDown = 2;
+					enemyBulletList[i]._power = enemy._power;
+					enemyBulletList[i]._symbol = '*';
+					break;
+				}
+			}
+			break;
+		}
+		enemy._attkPatternIndex = (enemy._attkPatternIndex + 1) % enemy._pattern->_attkPatternSize;
 	}
 
 	//플레이어 이동 처리
@@ -155,9 +269,84 @@ BOOL UpdateGame()
 
 			player._nowMoveCoolDown = player._moveCoolDown;
 		}
-
 	}
 
+	//플레이어 공격 처리
+	if (player._nowAttackCoolDown != 0)
+		player._nowAttackCoolDown--;
+	if (player._nowAttackCoolDown == 0)
+	{
+		if (GetAsyncKeyState(VK_SPACE))
+		{
+			for (int i = 0; i < MAX_PLAYER_BULLETS; i++)
+			{
+				if (playerBulletList[i]._isUsed == FALSE)
+				{
+					playerBulletList[i]._isUsed = TRUE;
+					playerBulletList[i]._moveX = 0;
+					playerBulletList[i]._moveY = -1;
+					playerBulletList[i]._x = player._x;
+					playerBulletList[i]._y = player._y;
+					playerBulletList[i]._nowMoveCoolDown = 0;
+					playerBulletList[i]._moveCoolDown = 2;
+					playerBulletList[i]._power = player._power;
+					playerBulletList[i]._symbol = '^';
+					break;
+				}
+			}
+			player._nowAttackCoolDown = player._attackCoolDown;
+		}
+	}
+	
+	//충돌처리
+	//플레이어의총알 -> ENEMY
+	for (int i = 0; i < MAX_PLAYER_BULLETS; i++)
+	{
+		if (!playerBulletList[i]._isUsed) continue;
+		
+		//ENEMY전체 순회해서 같은좌표의 ENEMY가있는지 찾기
+		for (int j = 0; j < MAX_ENEMY_NUMS; j++)
+		{
+			if (!enemyList[j]._isUsed) continue;
+			// player의 총알에 ENEMY가 맞았다면
+			if (playerBulletList[i]._x == enemyList[j]._x && playerBulletList[i]._y == enemyList[j]._y)
+			{
+				//enemy의 체력을 깎는다.
+				enemyList[j]._hp -= playerBulletList[i]._power;
+				//총알을 없앤다.
+				playerBulletList[i]._isUsed = FALSE;
+				//enemy의 체력이 0이하라면 죽음처리
+				if (enemyList[j]._hp <= 0)
+				{
+					//플레이어 점수획득
+					player._score += enemyList[j]._score;
+					//enemy를 없앤다.
+					enemyList[j]._isUsed = FALSE;
+					//살아있는 enemy수도 counting
+					aliveEnemyNums--;
+				}
+			}
+		}
+	}
+	//ENEMY의 총알 -> PLAYER
+	for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
+	{
+		if (!enemyBulletList[i]._isUsed) continue;
+		if (player._x == enemyBulletList[i]._x && player._y == enemyBulletList[i]._y)
+		{
+			player._hp -= enemyBulletList[i]._power;
+			enemyBulletList[i]._isUsed = FALSE;
+			//플레이어가 죽었다면
+			if (player._hp <= 0)
+			{
+				nowStage = 0;
+				isStageLoaded = FALSE;
+				scene = GAME;
+				return FALSE;
+			}
+		}
+
+	}
 
 	//스테이지를 클리어했다면.
 	if (aliveEnemyNums == 0)
@@ -196,6 +385,15 @@ void RenderGame()
 		Sprite_Draw(i, 0, fpsMsg[i]);
 	}
 
+	//STAGE, HP, SCORE 상단 출력
+	char statusBar[50];
+	sprintf_s(statusBar, "STAGE [%03d]     HP : %05d    SCORE : %05d", nowStage + 1, player._hp, player._score);
+	for (int i = 0; i < strlen(statusBar); i++)
+	{
+		Sprite_Draw(dfSCREEN_WIDTH - (int)strlen(statusBar) + i - 1, 0, statusBar[i]);
+	}
+
+
 	//ENEMY 그려주기
 	if (aliveEnemyNums > 0)
 	{
@@ -208,6 +406,20 @@ void RenderGame()
 
 	//Player 그려주기
 	Sprite_Draw(player._x, player._y, player._symbol);
+
+	//Bullet 그려주기
+	for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
+	{
+		if (!enemyBulletList[i]._isUsed)
+			continue;
+		Sprite_Draw(enemyBulletList[i]._x, enemyBulletList[i]._y, enemyBulletList[i]._symbol);
+	}
+	for (int i = 0; i < MAX_PLAYER_BULLETS; i++)
+	{
+		if (!playerBulletList[i]._isUsed)
+			continue;
+		Sprite_Draw(playerBulletList[i]._x, playerBulletList[i]._y, playerBulletList[i]._symbol);
+	}
 
 	Buffer_Flip();
 

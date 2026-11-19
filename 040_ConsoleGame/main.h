@@ -14,6 +14,8 @@
 #define ENEMY_DIR "enemy/"
 #define ENEMY_LIST_FILE "_enemy_list.txt" //enemy 정보 파일
 
+#define MAX_ENEMY_BULLETS 100 //화면속 상대 총알 MAX개수
+#define MAX_PLAYER_BULLETS 30 //화면속 내 총알 MAX 개수
 #define MAX_ENEMY_NUMS 200
 
 enum SCENE
@@ -90,3 +92,19 @@ struct Player
 };
 
 inline Player player;
+
+struct Bullet
+{
+	BOOL _isUsed;         //배열로 쓸거라, 활성화 ON OFF
+	char _symbol;
+	int _power;
+	int _x;
+	int _y;
+	int _moveCoolDown;    //움직이는거 쿨타임
+	int _nowMoveCoolDown; //현재 쿨타임 계산용
+	int _moveX;           //움직이는 방향
+	int _moveY;           //움직이는 방향
+};
+
+inline Bullet playerBulletList[MAX_PLAYER_BULLETS];
+inline Bullet enemyBulletList[MAX_ENEMY_BULLETS];

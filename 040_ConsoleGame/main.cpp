@@ -22,7 +22,7 @@ int main()
 			GoLoad();
 			break;
 		case EXIT:
-			//GoExit();
+			GoExit();
 			break;
 		}
 	}

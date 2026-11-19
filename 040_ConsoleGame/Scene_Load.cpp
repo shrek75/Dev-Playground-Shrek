@@ -173,17 +173,7 @@ void GoLoad()
 
 #pragma endregion
 
-	//Player 값 설정 (그냥 여기서 코드로할게..)
-	player._hp = 10;
-	player._attackCoolDown = 10;
-	player._moveCoolDown = 1;
-	player._nowAttackCoolDown = 0;
-	player._nowMoveCoolDown = 0;
-	player._score = 0;
-	player._symbol = '@';
-	player._power = 1;
-	player._x = dfSCREEN_WIDTH / 2;
-	player._y = dfSCREEN_HEIGHT - 1;
+	
 
 
 	//GAME SCENE으로 전환한다.
