@@ -38,16 +38,18 @@ void GoLoad()
 
 #pragma region Enemy Pattern 로딩
 	//Enemy Pattern 로딩
-	TextParser patternList(PATTERN_LIST_FILE);
+	char patternList[MAX_PATH + 1];
+	sprintf_s(patternList, "%s%s", PATTERN_DIR, PATTERN_LIST_FILE);
+	TextParser pl(patternList);
 
 	//PatternList 파일열기 실패!
-	if (patternList.GetFileSize() == 0)
+	if (pl.GetFileSize() == 0)
 		return;
 
-	patternList.GetNextString(buf, sizeof(buf));
-	patternList.GetNextString(buf, sizeof(buf));
+	pl.GetNextString(buf, sizeof(buf));
+	pl.GetNextString(buf, sizeof(buf));
 	totalPattern = atoi(&buf[16]);
-	patternList.GetNextString(buf, sizeof(buf));
+	pl.GetNextString(buf, sizeof(buf));
 
 	patternInfo = (ENEMY_PATTERN*)malloc(sizeof(ENEMY_PATTERN) * totalPattern);
 	if (patternInfo == nullptr) return;
@@ -55,12 +57,14 @@ void GoLoad()
 	for (int i = 0; i < totalPattern; i++)
 	{
 		//Pattern 파일이름을 불러온다.
-		patternList.GetNextString(buf, sizeof(buf));
+		pl.GetNextString(buf, sizeof(buf));
+		char patternFile[MAX_PATH + 1];
+		sprintf_s(patternFile, "%s%s", PATTERN_DIR, buf);
 		//패턴 파일을 연다
-		TextParser patternFile(buf);
+		TextParser p(patternFile);
 
 		//파일열기에 실패했다면
-		if (patternFile.GetFileSize() == 0)
+		if (p.GetFileSize() == 0)
 		{
 			totalPattern--;
 			i--;
@@ -74,14 +78,14 @@ void GoLoad()
 		strcpy_s(patternInfo[i]._patternName, buf);
 
 		//movePattern
-		int size = patternFile.GetNextString(str, sizeof(str));
+		int size = p.GetNextString(str, sizeof(str));
 		strcpy_s(patternInfo[i]._movePattern, &str[6]);
 
 		//movePatternSize
 		patternInfo[i]._movePatternSize = size - 6;
 
 		//attackPattern
-		size = patternFile.GetNextString(str, sizeof(str));
+		size = p.GetNextString(str, sizeof(str));
 		strcpy_s(patternInfo[i]._attkPattern, &str[6]);
 
 		//attackPatternSize
@@ -93,7 +97,9 @@ void GoLoad()
 #pragma region Enemy 로딩
 
 	//Enemy 로딩
-	TextParser enemyList(ENEMY_LIST_FILE);
+	char enemyFile[MAX_PATH + 1];
+	sprintf_s(enemyFile, "%s%s", ENEMY_DIR, ENEMY_LIST_FILE);
+	TextParser enemyList(enemyFile);
 	if (enemyList.GetFileSize() == 0) return;
 
 	enemyList.GetNextString(buf, sizeof(buf));
@@ -110,8 +116,11 @@ void GoLoad()
 	{
 		//Enemy 파일이름 불러온다.
 		enemyList.GetNextString(buf, sizeof(buf));
+		char enemyFile[MAX_PATH + 1];
+		sprintf_s(enemyFile, "%s%s", ENEMY_DIR, buf);
 		//그 Enemy파일을 연다.
-		TextParser enemy(buf);
+		TextParser enemy(enemyFile);
+
 		if (enemy.GetFileSize() == 0)
 		{
 			totalEnemyInfo--;
@@ -132,9 +141,10 @@ void GoLoad()
 		//patternName에 해당하는 패턴정보가 있는지 순회해봄. 
 		for (int j = 0; j < totalPattern; j++)
 		{
-			if (strcmp(str, patternInfo[j]._patternName) == 0)
+			if (strcmp(&str[10], patternInfo[j]._patternName) == 0)
 			{
 				tempP = &patternInfo[j];
+				break;
 			}
 		}
 
@@ -162,6 +172,18 @@ void GoLoad()
 	}
 
 #pragma endregion
+
+	//Player 값 설정 (그냥 여기서 코드로할게..)
+	player._hp = 10;
+	player._attackCoolDown = 10;
+	player._moveCoolDown = 1;
+	player._nowAttackCoolDown = 0;
+	player._nowMoveCoolDown = 0;
+	player._score = 0;
+	player._symbol = '@';
+	player._power = 1;
+	player._x = dfSCREEN_WIDTH / 2;
+	player._y = dfSCREEN_HEIGHT - 1;
 
 
 	//GAME SCENE으로 전환한다.

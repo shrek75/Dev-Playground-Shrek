@@ -5,11 +5,14 @@
 #pragma comment(lib, "winmm.lib")
 
 #define GAME_FPS 50 //게임의 초당 Update 횟수
-#define GAME_FPS_100NS (GAME_FPS * 1000 * 10) //"GAME_FPS"를 100ns단위로 변환한 값 
+#define GAME_FPS_100NS (1000 / GAME_FPS * 1000 * 10) //"GAME_FPS"를 맞추려면 얼마마다 돌아야하는지 100ns단위로 변환한 값 
 
+#define STAGE_DIR "stage/"
 #define STAGE_LIST_FILE "stage/_stage_list.txt" //스테이지 정보 파일
-#define ENEMY_LIST_FILE "enemy/_enemy_list.txt" //enemy 정보 파일
-#define PATTERN_LIST_FILE "pattern/_pattern_list.txt" //enemy pattern 정보 파일
+#define PATTERN_DIR "pattern/"
+#define PATTERN_LIST_FILE "_pattern_list.txt"
+#define ENEMY_DIR "enemy/"
+#define ENEMY_LIST_FILE "_enemy_list.txt" //enemy 정보 파일
 
 #define MAX_ENEMY_NUMS 200
 
@@ -59,6 +62,8 @@ struct ENEMY
 	int _power;
 	int _x;
 	int _y;
+	int _movePatternIndex; //현재 무브패턴의 몇번째에 있는지
+	int _attkPatternIndex; //현재 어택패턴의 몇번째에 있는지
 };
 
 inline int totalEnemyInfo = 0; //Enemy가 총 몇종류인지.
@@ -69,3 +74,19 @@ inline int nowStage = 0; //현재스테이지
 inline BOOL isStageLoaded = FALSE; //현재스테이지가 로딩되었는지
 inline ENEMY enemyList[MAX_ENEMY_NUMS] = { 0 }; //Enemy List
 inline int aliveEnemyNums = 0;
+
+struct Player
+{
+	char _symbol;
+	int _hp;
+	int _score;
+	int _power;
+	int _x;
+	int _y;
+	int _attackCoolDown;   //어택쿨타임
+	int _nowAttackCoolDown; //현재 쿨타임 계산용
+	int _moveCoolDown;    //움직이는거 쿨타임
+	int _nowMoveCoolDown; //현재 쿨타임 계산용
+};
+
+inline Player player;

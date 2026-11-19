@@ -51,7 +51,9 @@ BOOL UpdateGame()
 		}
 
 		//해당스테이지 파일 열기
-		TextParser s(pStageFileName[nowStage]);
+		char stageFile[MAX_PATH + 1];
+		sprintf_s(stageFile, "%s%s", STAGE_DIR, pStageFileName[nowStage]);
+		TextParser s(stageFile);
 		if (s.GetFileSize() == 0) return FALSE;
 		
 		for (int y = 1; y < dfSCREEN_HEIGHT; y++)
@@ -78,6 +80,9 @@ BOOL UpdateGame()
 						enemyList[aliveEnemyNums]._score = enemyInfo[i]._score;
 						enemyList[aliveEnemyNums]._symbol = enemyInfo[i]._symbol;
 						enemyList[aliveEnemyNums]._hp = enemyInfo[i]._hp;
+						enemyList[aliveEnemyNums]._movePatternIndex = 0;
+						enemyList[aliveEnemyNums]._attkPatternIndex = 0;
+
 						aliveEnemyNums++;
 					}
 				}
@@ -87,11 +92,80 @@ BOOL UpdateGame()
 	}
 #pragma endregion
 
-	if (GetAsyncKeyState(VK_SPACE))
+	//ENEMY LIST 순회
+	for (int i = 0; i < MAX_ENEMY_NUMS; i++)
 	{
-		scene = EXIT;
-		return FALSE;
+		if (!enemyList[i]._isUsed) continue;
+
+		//이동처리
+		char nextMove = enemyList[i]._pattern->_movePattern[enemyList[i]._movePatternIndex];
+		switch (nextMove)
+		{
+		case '>':
+			if (enemyList[i]._x + 1 < dfSCREEN_WIDTH - 1)
+				enemyList[i]._x++;
+			break;
+		case '<':
+			if (enemyList[i]._x - 1 >= 0)
+				enemyList[i]._x--;
+			break;
+		}
+		enemyList[i]._movePatternIndex = (enemyList[i]._movePatternIndex + 1) % enemyList[i]._pattern->_movePatternSize;
+
+
+
 	}
+
+	//플레이어 이동 처리
+	if (player._nowMoveCoolDown != 0)
+		player._nowMoveCoolDown--;
+	if (player._nowMoveCoolDown == 0)
+	{
+		BOOL isMoved = FALSE;
+		if (GetAsyncKeyState(VK_RIGHT))
+		{
+			player._x++;
+			isMoved = TRUE;
+		}
+		if (GetAsyncKeyState(VK_LEFT))
+		{
+			player._x--;
+			isMoved = TRUE;
+		}
+		if (GetAsyncKeyState(VK_UP))
+		{
+			player._y--;
+			isMoved = TRUE;
+		}
+		if (GetAsyncKeyState(VK_DOWN))
+		{
+			player._y++;
+			isMoved = TRUE;
+		}
+		if (isMoved)
+		{
+			if (player._x == -1)
+				player._x++;
+			if (player._x == dfSCREEN_WIDTH - 1)
+				player._x--;
+			if (player._y == 0)
+				player._y++;
+			if (player._y == dfSCREEN_HEIGHT)
+				player._y--;
+
+			player._nowMoveCoolDown = player._moveCoolDown;
+		}
+
+	}
+
+
+	//스테이지를 클리어했다면.
+	if (aliveEnemyNums == 0)
+	{
+		nowStage++;
+		isStageLoaded = FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -132,6 +206,8 @@ void RenderGame()
 		}
 	}
 
+	//Player 그려주기
+	Sprite_Draw(player._x, player._y, player._symbol);
 
 	Buffer_Flip();
 
